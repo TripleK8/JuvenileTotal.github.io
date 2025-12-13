@@ -42,11 +42,17 @@
         .delay-100 { animation-delay: 0.1s; }
         .delay-200 { animation-delay: 0.2s; }
         .delay-300 { animation-delay: 0.3s; }
+
+        /* Chart Canvas Size Control */
+        .chart-container {
+            position: relative;
+            height: 300px; /* กำหนดความสูงมาตรฐานสำหรับกราฟ */
+            width: 100%;
+        }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen font-sans text-slate-600">
 
-    <!-- Navbar / Header -->
     <nav class="bg-white border-b border-gray-100">
         <div class="container mx-auto max-w-7xl px-6 py-4 flex justify-between items-center">
             <div class="flex items-center gap-3">
@@ -72,9 +78,7 @@
 
     <main class="container mx-auto max-w-7xl px-6 py-8 space-y-8">
         
-        <!-- Summary Cards -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 animate-fade-in-up">
-            <!-- Card 1: กลุ่มตัวอย่างทั้งหมด -->
             <div class="bg-white p-6 rounded-2xl shadow-card hover:shadow-lg transition-shadow duration-300 relative overflow-hidden group">
                 <div class="absolute right-0 top-0 h-full w-1/3 bg-gradient-to-l from-blue-50 to-transparent opacity-50 group-hover:from-blue-100 transition-all"></div>
                 <div class="relative z-10">
@@ -91,7 +95,6 @@
                 </div>
             </div>
 
-            <!-- Card 2: สัดส่วนเพศชาย -->
             <div class="bg-white p-6 rounded-2xl shadow-card hover:shadow-lg transition-shadow duration-300 relative overflow-hidden group">
                 <div class="absolute right-0 top-0 h-full w-1/3 bg-gradient-to-l from-indigo-50 to-transparent opacity-50 group-hover:from-indigo-100 transition-all"></div>
                 <div class="relative z-10">
@@ -108,7 +111,6 @@
                 </div>
             </div>
 
-            <!-- Card 3: ศูนย์ฝึกฯ ที่เข้าร่วม -->
             <div class="bg-white p-6 rounded-2xl shadow-card hover:shadow-lg transition-shadow duration-300 relative overflow-hidden group">
                 <div class="absolute right-0 top-0 h-full w-1/3 bg-gradient-to-l from-emerald-50 to-transparent opacity-50 group-hover:from-emerald-100 transition-all"></div>
                 <div class="relative z-10">
@@ -126,8 +128,35 @@
             </div>
         </div>
 
-        <!-- Table Section (ใช้ delay-100 แทน) -->
-        <div class="bg-white rounded-2xl shadow-soft border border-gray-100 overflow-hidden animate-fade-in-up delay-100">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="bg-white p-6 rounded-2xl shadow-soft border border-gray-100 animate-fade-in-up delay-100">
+                <div class="mb-6">
+                    <h2 id="chart1Title" class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                        <i data-lucide="pie-chart" class="text-indigo-500"></i>
+                        การกระจายตัวของเพศ
+                    </h2>
+                    <p class="text-sm text-slate-500 mt-1">สัดส่วนเพศชายและเพศหญิงจากกลุ่มตัวอย่างทั้งหมด</p>
+                </div>
+                <div class="chart-container flex justify-center items-center">
+                    <canvas id="genderChart"></canvas>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl shadow-soft border border-gray-100 animate-fade-in-up delay-200">
+                <div class="mb-6">
+                    <h2 id="chart2Title" class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                        <i data-lucide="bar-chart-2" class="text-indigo-500"></i>
+                        สัดส่วนตามศูนย์ฝึกฯ
+                    </h2>
+                    <p class="text-sm text-slate-500 mt-1">จำนวนกลุ่มตัวอย่างทั้งหมดในแต่ละศูนย์ฝึกฯ</p>
+                </div>
+                <div class="chart-container">
+                    <canvas id="centerPieChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-soft border border-gray-100 overflow-hidden animate-fade-in-up delay-300">
             <div class="p-6 border-b border-gray-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
@@ -154,8 +183,7 @@
                         </tr>
                     </thead>
                     <tbody id="tableBody" class="divide-y divide-gray-100">
-                        <!-- JS renders here -->
-                    </tbody>
+                        </tbody>
                     <tfoot class="bg-gray-50/50 font-bold text-slate-800">
                         <tr>
                             <td id="footerTotal" colspan="3" class="px-6 py-5 text-right text-slate-500">รวมทั้งหมด</td>
@@ -291,9 +319,8 @@
             document.getElementById('card3Title').innerText = t.card3Title;
             document.getElementById('unitCenter').innerText = t.unitCenter;
 
-            // ลบการอัพเดท Chart Titles ออก
-            // document.getElementById('chart1Title').innerText = t.chart1Title;
-            // document.getElementById('chart2Title').innerText = t.chart2Title;
+            document.getElementById('chart1Title').innerText = t.chart1Title;
+            document.getElementById('chart2Title').innerText = t.chart2Title;
 
             document.getElementById('tableTitle').innerText = t.tableTitle;
             document.getElementById('tableSubtitle').innerText = t.tableSubtitle;
@@ -324,7 +351,7 @@
             renderTable(t);
 
             // 4. Update Charts
-            // ลบการเรียกใช้ renderCharts(t) ออก
+            renderCharts(t);
         }
 
         function renderTable(t) {
@@ -332,13 +359,15 @@
             tableBody.innerHTML = ''; // Clear existing
 
             data1.forEach((row, index) => {
+                // Find matching info from data2 based on 'center' property
                 let info = data2.find(d => d.province === row.center);
+                // Handle the case where the province name in data1 is a center name (like บ้านชายกรุณา)
                 if (!info && row.center === "บ้านชายกรุณา") {
-                    info = data2.find(d => d.province === "สมุทรปราการ");
+                    info = data2.find(d => d.name.includes("บ้านชายกรุณา"));
                 }
 
                 // Determine display values based on language
-                const displayName = currentLang === 'th' ? (info ? info.name : row.center) : (info ? info.nameEn : centerTranslations[row.center]);
+                const displayName = currentLang === 'th' ? (info ? info.name : row.center) : (info ? info.nameEn : centerTranslations[row.center] || row.center);
                 const displayProvince = currentLang === 'th' ? (info ? info.province : '') : (info ? info.provinceEn : '');
                 const displayDate = currentLang === 'th' ? (info ? info.date : '-') : (info ? info.dateEn : '-');
 
@@ -373,12 +402,180 @@
             lucide.createIcons();
         }
 
-        // ลบฟังก์ชัน renderCharts ออกทั้งหมด
-        /*
         function renderCharts(t) {
-            // ... (code removed)
+            const totalStats = data1.reduce((acc, curr) => ({
+                male: acc.male + curr.male,
+                female: acc.female + curr.female
+            }), { male: 0, female: 0 });
+
+            // --- 1. Gender Distribution (Doughnut Chart) ---
+            if (genderChartInstance) {
+                genderChartInstance.destroy();
+            }
+
+            const genderData = {
+                labels: [t.male, t.female],
+                datasets: [{
+                    data: [totalStats.male, totalStats.female],
+                    backgroundColor: [
+                        '#4F46E5', // primary (Indigo-600) for Male
+                        '#EC4899', // pink-600 for Female
+                    ],
+                    hoverBackgroundColor: [
+                        '#6366F1',
+                        '#F472B6',
+                    ],
+                    borderWidth: 0,
+                    spacing: 5,
+                }]
+            };
+
+            const genderConfig = {
+                type: 'doughnut',
+                data: genderData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '60%', // Adjust to make it a doughnut
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 20,
+                                usePointStyle: true,
+                                font: {
+                                    family: 'Sarabun, sans-serif'
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed !== null) {
+                                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                        const percentage = ((context.parsed / total) * 100).toFixed(1) + '%';
+                                        label += context.parsed + ` (${percentage})`;
+                                    }
+                                    return label;
+                                }
+                            },
+                            bodyFont: {
+                                family: 'Sarabun, sans-serif'
+                            },
+                            titleFont: {
+                                family: 'Sarabun, sans-serif'
+                            }
+                        }
+                    },
+                    layout: {
+                        padding: {
+                            top: 0,
+                            bottom: 10
+                        }
+                    }
+                }
+            };
+            
+            const genderCtx = document.getElementById('genderChart').getContext('2d');
+            genderChartInstance = new Chart(genderCtx, genderConfig);
+
+
+            // --- 2. Proportion by Center (Bar Chart) ---
+            if (pieChartInstance) { // Rename to centerChartInstance for clarity if desired, but keeping original variable for minimal change.
+                pieChartInstance.destroy();
+            }
+
+            // Prepare Bar Chart Data
+            const centerLabels = data1.map(d => currentLang === 'th' ? d.center : centerTranslations[d.center] || d.center);
+            const centerSamples = data1.map(d => d.sample);
+            const centerMales = data1.map(d => d.male);
+            const centerFemales = data1.map(d => d.female);
+            
+            const centerChartData = {
+                labels: centerLabels,
+                datasets: [
+                    {
+                        label: t.male,
+                        data: centerMales,
+                        backgroundColor: '#4F46E5', // Indigo-600
+                        borderRadius: 4,
+                    },
+                    {
+                        label: t.female,
+                        data: centerFemales,
+                        backgroundColor: '#EC4899', // Pink-600
+                        borderRadius: 4,
+                    }
+                ]
+            };
+
+            const centerChartConfig = {
+                type: 'bar',
+                data: centerChartData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            stacked: true,
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                font: {
+                                    family: 'Sarabun, sans-serif'
+                                }
+                            }
+                        },
+                        y: {
+                            stacked: true,
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: t.thTotal,
+                                font: {
+                                    family: 'Sarabun, sans-serif',
+                                    weight: 'bold'
+                                }
+                            },
+                            ticks: {
+                                font: {
+                                    family: 'Sarabun, sans-serif'
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                usePointStyle: true,
+                                padding: 20,
+                                font: {
+                                    family: 'Sarabun, sans-serif'
+                                }
+                            }
+                        },
+                        tooltip: {
+                            bodyFont: {
+                                family: 'Sarabun, sans-serif'
+                            },
+                            titleFont: {
+                                family: 'Sarabun, sans-serif'
+                            }
+                        }
+                    }
+                }
+            };
+
+            const pieCtx = document.getElementById('centerPieChart').getContext('2d');
+            pieChartInstance = new Chart(pieCtx, centerChartConfig);
         }
-        */
+
 
         // Start
         init();
