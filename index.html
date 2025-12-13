@@ -3,145 +3,386 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
-
-    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <title>Dashboard ข้อมูลกลุ่มตัวอย่าง</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <script>
         tailwind.config = {
             theme: {
-                fontFamily: { sans: ['Sarabun', 'sans-serif'] }
+                fontFamily: {
+                    sans: ['Sarabun', 'sans-serif'],
+                },
+                extend: {
+                    colors: {
+                        primary: '#4F46E5',
+                        secondary: '#10B981',
+                        accent: '#F59E0B',
+                    },
+                    boxShadow: {
+                        'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
+                        'card': '0 0 0 1px rgba(0,0,0,0.03), 0 2px 8px rgba(0,0,0,0.04)',
+                    }
+                }
             }
         }
     </script>
-</head>
-
-<body class="bg-gray-50 min-h-screen font-sans text-slate-700">
-
-<!-- ================= NAVBAR ================= -->
-<nav class="bg-white border-b">
-    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-
-        <div class="flex items-center gap-3">
-            <div class="p-2 bg-indigo-50 rounded-lg text-indigo-600">
-                <i data-lucide="layout-dashboard"></i>
-            </div>
-            <div>
-                <h1 class="text-xl font-bold text-slate-800" data-i18n="title">
-                    Dashboard กลุ่มตัวอย่าง
-                </h1>
-                <p class="text-xs text-slate-500" data-i18n="subtitle">
-                    ติดตามสถานะการวิจัยและลงพื้นที่
-                </p>
-            </div>
-        </div>
-
-        <!-- Language Switch -->
-        <div class="flex gap-2">
-            <button id="btn-th" onclick="setLang('th')"
-                class="px-3 py-1 text-xs font-semibold rounded-lg bg-indigo-100 text-indigo-700">
-                TH
-            </button>
-            <button id="btn-en" onclick="setLang('en')"
-                class="px-3 py-1 text-xs font-semibold rounded-lg bg-gray-100 text-gray-500">
-                EN
-            </button>
-        </div>
-
-    </div>
-</nav>
-
-<!-- ================= CONTENT ================= -->
-<main class="max-w-7xl mx-auto px-6 py-8 space-y-8">
-
-    <!-- SUMMARY -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-
-        <div class="bg-white p-6 rounded-xl shadow">
-            <h3 class="text-sm font-semibold text-slate-500" data-i18n="totalSample">
-                กลุ่มตัวอย่างทั้งหมด
-            </h3>
-            <p class="text-4xl font-bold text-slate-800 mt-2">372</p>
-        </div>
-
-        <div class="bg-white p-6 rounded-xl shadow">
-            <h3 class="text-sm font-semibold text-slate-500" data-i18n="maleSample">
-                เพศชาย
-            </h3>
-            <p class="text-4xl font-bold text-slate-800 mt-2">348</p>
-        </div>
-
-        <div class="bg-white p-6 rounded-xl shadow">
-            <h3 class="text-sm font-semibold text-slate-500" data-i18n="centerCount">
-                ศูนย์ฝึกที่เข้าร่วม
-            </h3>
-            <p class="text-4xl font-bold text-slate-800 mt-2">6</p>
-        </div>
-
-    </div>
-
-    <!-- SECTION TITLE -->
-    <div class="bg-white p-6 rounded-xl shadow">
-        <h2 class="text-xl font-bold text-slate-800" data-i18n="scheduleTable">
-            ตารางกำหนดการลงพื้นที่
-        </h2>
-        <p class="text-sm text-slate-500 mt-1" data-i18n="scheduleDesc">
-            รายละเอียดช่วงเวลาดำเนินการในแต่ละพื้นที่
-        </p>
-    </div>
-
-</main>
-
-<!-- ================= SCRIPT ================= -->
-<script>
-const translations = {
-    th: {
-        title: "Dashboard กลุ่มตัวอย่าง",
-        subtitle: "ติดตามสถานะการวิจัยและลงพื้นที่",
-        totalSample: "กลุ่มตัวอย่างทั้งหมด",
-        maleSample: "เพศชาย",
-        centerCount: "ศูนย์ฝึกที่เข้าร่วม",
-        scheduleTable: "ตารางกำหนดการลงพื้นที่",
-        scheduleDesc: "รายละเอียดช่วงเวลาดำเนินการในแต่ละพื้นที่"
-    },
-    en: {
-        title: "Sample Group Dashboard",
-        subtitle: "Research progress and fieldwork tracking",
-        totalSample: "Total Samples",
-        maleSample: "Male Participants",
-        centerCount: "Training Centers",
-        scheduleTable: "Fieldwork Schedule",
-        scheduleDesc: "Details of fieldwork periods by location"
-    }
-};
-
-function setLang(lang) {
-    document.documentElement.lang = lang;
-
-    document.querySelectorAll("[data-i18n]").forEach(el => {
-        const key = el.getAttribute("data-i18n");
-        if (translations[lang][key]) {
-            el.innerText = translations[lang][key];
+    <style>
+        .animate-fade-in-up {
+            animation: fadeInUp 0.6s ease-out forwards;
+            opacity: 0;
+            transform: translateY(20px);
         }
-    });
+        @keyframes fadeInUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .delay-100 { animation-delay: 0.1s; }
+        .delay-200 { animation-delay: 0.2s; }
+        .delay-300 { animation-delay: 0.3s; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen font-sans text-slate-600">
 
-    document.getElementById("btn-th").className =
-        lang === "th"
-        ? "px-3 py-1 text-xs font-semibold rounded-lg bg-indigo-100 text-indigo-700"
-        : "px-3 py-1 text-xs font-semibold rounded-lg bg-gray-100 text-gray-500";
+    <!-- Navbar / Header -->
+    <nav class="bg-white border-b border-gray-100">
+        <div class="container mx-auto max-w-7xl px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="p-2 bg-indigo-50 rounded-lg text-indigo-600">
+                    <i data-lucide="layout-dashboard"></i>
+                </div>
+                <div>
+                    <h1 id="navTitle" class="text-xl font-bold text-slate-800 leading-tight">Dashboard กลุ่มตัวอย่าง</h1>
+                    <p id="navSubtitle" class="text-xs text-slate-500">ติดตามสถานะการวิจัยและลงพื้นที่</p>
+                </div>
+            </div>
+            <div class="flex gap-3">
+                <button onclick="toggleLanguage()" class="flex items-center gap-2 text-sm font-semibold text-slate-600 hover:text-indigo-600 bg-white border border-slate-200 hover:border-indigo-200 px-3 py-2 rounded-lg transition-all">
+                    <span class="flex items-center justify-center w-5 h-5 rounded-full bg-slate-100 text-[10px]" id="langIcon">TH</span>
+                    <span id="langText">English</span>
+                </button>
+                <button onclick="window.print()" class="hidden md:flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-indigo-600 transition-colors bg-gray-50 hover:bg-indigo-50 px-4 py-2 rounded-lg border border-transparent hover:border-indigo-100 cursor-pointer">
+                    <i data-lucide="printer" size="16"></i> <span id="btnPrint">พิมพ์รายงาน</span>
+                </button>
+            </div>
+        </div>
+    </nav>
 
-    document.getElementById("btn-en").className =
-        lang === "en"
-        ? "px-3 py-1 text-xs font-semibold rounded-lg bg-indigo-100 text-indigo-700"
-        : "px-3 py-1 text-xs font-semibold rounded-lg bg-gray-100 text-gray-500";
-}
+    <main class="container mx-auto max-w-7xl px-6 py-8 space-y-8">
+        
+        <!-- Summary Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 animate-fade-in-up">
+            <!-- Card 1: กลุ่มตัวอย่างทั้งหมด -->
+            <div class="bg-white p-6 rounded-2xl shadow-card hover:shadow-lg transition-shadow duration-300 relative overflow-hidden group">
+                <div class="absolute right-0 top-0 h-full w-1/3 bg-gradient-to-l from-blue-50 to-transparent opacity-50 group-hover:from-blue-100 transition-all"></div>
+                <div class="relative z-10">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="p-2.5 rounded-xl bg-blue-100 text-blue-600 shadow-sm">
+                            <i data-lucide="users" size="20"></i>
+                        </div>
+                        <h3 id="card1Title" class="text-sm font-semibold text-slate-500 uppercase tracking-wide">กลุ่มตัวอย่างทั้งหมด</h3>
+                    </div>
+                    <div class="flex items-baseline gap-2">
+                        <span id="totalSamples" class="text-4xl font-bold text-slate-800 tracking-tight">0</span>
+                        <span id="unitPerson" class="text-sm font-medium text-slate-400">คน</span>
+                    </div>
+                </div>
+            </div>
 
-// default
-setLang("th");
-lucide.createIcons();
-</script>
+            <!-- Card 2: สัดส่วนเพศชาย -->
+            <div class="bg-white p-6 rounded-2xl shadow-card hover:shadow-lg transition-shadow duration-300 relative overflow-hidden group">
+                <div class="absolute right-0 top-0 h-full w-1/3 bg-gradient-to-l from-indigo-50 to-transparent opacity-50 group-hover:from-indigo-100 transition-all"></div>
+                <div class="relative z-10">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="p-2.5 rounded-xl bg-indigo-100 text-indigo-600 shadow-sm">
+                            <i data-lucide="user" size="20"></i>
+                        </div>
+                        <h3 id="card2Title" class="text-sm font-semibold text-slate-500 uppercase tracking-wide">สัดส่วนเพศชาย</h3>
+                    </div>
+                    <div class="flex items-baseline gap-2">
+                        <span id="maleCount" class="text-4xl font-bold text-slate-800 tracking-tight">0</span>
+                        <span id="unitPerson2" class="text-sm font-medium text-slate-400">คน</span>
+                    </div>
+                </div>
+            </div>
 
+            <!-- Card 3: ศูนย์ฝึกฯ ที่เข้าร่วม -->
+            <div class="bg-white p-6 rounded-2xl shadow-card hover:shadow-lg transition-shadow duration-300 relative overflow-hidden group">
+                <div class="absolute right-0 top-0 h-full w-1/3 bg-gradient-to-l from-emerald-50 to-transparent opacity-50 group-hover:from-emerald-100 transition-all"></div>
+                <div class="relative z-10">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="p-2.5 rounded-xl bg-emerald-100 text-emerald-600 shadow-sm">
+                            <i data-lucide="map-pin" size="20"></i>
+                        </div>
+                        <h3 id="card3Title" class="text-sm font-semibold text-slate-500 uppercase tracking-wide">ศูนย์ฝึกฯ ที่เข้าร่วม</h3>
+                    </div>
+                    <div class="flex items-baseline gap-2">
+                        <span id="centerCount" class="text-4xl font-bold text-slate-800 tracking-tight">0</span>
+                        <span id="unitCenter" class="text-sm font-medium text-slate-400">แห่ง</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Table Section (ใช้ delay-100 แทน) -->
+        <div class="bg-white rounded-2xl shadow-soft border border-gray-100 overflow-hidden animate-fade-in-up delay-100">
+            <div class="p-6 border-b border-gray-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                        <i data-lucide="calendar-days" class="text-indigo-500"></i>
+                        <span id="tableTitle">ตารางกำหนดการลงพื้นที่</span>
+                    </h2>
+                    <p id="tableSubtitle" class="text-sm text-slate-500 mt-1">รายละเอียดจำนวนกลุ่มตัวอย่างและช่วงเวลาดำเนินการ</p>
+                </div>
+                <div class="flex gap-2">
+                    <span class="px-3 py-1 bg-indigo-50 text-indigo-700 rounded-lg text-xs font-semibold uppercase tracking-wider">Year 2025-2026</span>
+                </div>
+            </div>
+            
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm text-left">
+                    <thead class="bg-gray-50 text-slate-500 font-semibold text-xs uppercase tracking-wider">
+                        <tr>
+                            <th class="px-6 py-4 rounded-tl-lg">#</th>
+                            <th id="thCenter" class="px-6 py-4">ศูนย์ฝึกและอบรมฯ</th>
+                            <th id="thDate" class="px-6 py-4">ช่วงเวลาดำเนินการ</th>
+                            <th id="thMale" class="px-6 py-4 text-center">ชาย</th>
+                            <th id="thFemale" class="px-6 py-4 text-center">หญิง</th>
+                            <th id="thTotal" class="px-6 py-4 text-right rounded-tr-lg">รวม (คน)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody" class="divide-y divide-gray-100">
+                        <!-- JS renders here -->
+                    </tbody>
+                    <tfoot class="bg-gray-50/50 font-bold text-slate-800">
+                        <tr>
+                            <td id="footerTotal" colspan="3" class="px-6 py-5 text-right text-slate-500">รวมทั้งหมด</td>
+                            <td id="totalMaleTable" class="px-6 py-5 text-center text-indigo-600">0</td>
+                            <td id="totalFemaleTable" class="px-6 py-5 text-center text-pink-600">0</td>
+                            <td id="totalSampleTable" class="px-6 py-5 text-right text-lg">0</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        // Language State
+        let currentLang = 'th';
+
+        // Translation Data
+        const i18n = {
+            th: {
+                navTitle: "Dashboard กลุ่มตัวอย่าง",
+                navSubtitle: "ติดตามสถานะการวิจัยและลงพื้นที่",
+                langText: "English",
+                btnPrint: "พิมพ์รายงาน",
+                card1Title: "กลุ่มตัวอย่างทั้งหมด",
+                unitPerson: "คน",
+                unitPerson2: "คน",
+                unitCenter: "แห่ง",
+                card2Title: "สัดส่วนเพศชาย",
+                card3Title: "ศูนย์ฝึกฯ ที่เข้าร่วม",
+                chart1Title: "การกระจายตัวของเพศ",
+                chart2Title: "สัดส่วนตามศูนย์ฝึกฯ",
+                tableTitle: "ตารางกำหนดการลงพื้นที่",
+                tableSubtitle: "รายละเอียดจำนวนกลุ่มตัวอย่างและช่วงเวลาดำเนินการ",
+                thCenter: "ศูนย์ฝึกและอบรมฯ",
+                thDate: "ช่วงเวลาดำเนินการ",
+                thMale: "ชาย",
+                thFemale: "หญิง",
+                thTotal: "รวม (คน)",
+                footerTotal: "รวมทั้งหมด",
+                male: "ชาย",
+                female: "หญิง"
+            },
+            en: {
+                navTitle: "Sampling Dashboard",
+                navSubtitle: "Research Status & Field Visit Tracking",
+                langText: "ภาษาไทย",
+                btnPrint: "Print Report",
+                card1Title: "Total Samples",
+                unitPerson: "Persons",
+                unitPerson2: "Persons",
+                unitCenter: "Centers",
+                card2Title: "Male Ratio",
+                card3Title: "Participating Centers",
+                chart1Title: "Gender Distribution",
+                chart2Title: "Proportion by Center",
+                tableTitle: "Field Visit Schedule",
+                tableSubtitle: "Sample size details and operation periods",
+                thCenter: "Training Center",
+                thDate: "Operation Period",
+                thMale: "Male",
+                thFemale: "Female",
+                thTotal: "Total",
+                footerTotal: "Grand Total",
+                male: "Male",
+                female: "Female"
+            }
+        };
+
+        // Center Name Mappings (Key to English)
+        const centerTranslations = {
+            "ระยอง": "Rayong",
+            "ราชบุรี": "Ratchaburi",
+            "บ้านชายกรุณา": "Ban Chai Karuna",
+            "เชียงใหม่": "Chiang Mai",
+            "สุราษฎร์ธานี": "Surat Thani",
+            "อุบลราชธานี": "Ubon Ratchathani"
+        };
+
+        // ข้อมูลหลัก (Stats) - ใช้ Keys ภาษาไทยเป็นหลักในการ Map
+        const data1 = [
+            { center: "ระยอง", sample: 18, male: 14, female: 4 },
+            { center: "บ้านชายกรุณา", sample: 47, male: 47, female: 0 },
+            { center: "ราชบุรี", sample: 41, male: 40, female: 1 },
+            { center: "เชียงใหม่", sample: 60, male: 56, female: 4 },
+            { center: "สุราษฎร์ธานี", sample: 66, male: 60, female: 6 },
+            { center: "อุบลราชธานี", sample: 140, male: 131, female: 9 },
+        ];
+
+        // ข้อมูลรายละเอียด + วันที่ (เพิ่มภาษาอังกฤษ)
+        const data2 = [
+            { name: "ศูนย์ฝึกและอบรมเด็กและเยาวชนระยอง", nameEn: "Juvenile Training Center Rayong", province: "ระยอง", provinceEn: "Rayong", date: "17 – 22 พ.ย. 68", dateEn: "17 – 22 Nov 25" },
+            { name: "ศูนย์ฝึกและอบรมเด็กและเยาวชนราชบุรี", nameEn: "Juvenile Training Center Ratchaburi", province: "ราชบุรี", provinceEn: "Ratchaburi", date: "15 – 20 ธ.ค. 68", dateEn: "15 – 20 Dec 25" },
+            { name: "ศูนย์ฝึกและอบรมเด็กและเยาวชนบ้านชายกรุณา", nameEn: "Ban Chai Karuna Training Center", province: "สมุทรปราการ", provinceEn: "Samut Prakan", date: "8 – 13 ธ.ค. 68", dateEn: "8 – 13 Dec 25" },
+            { name: "ศูนย์ฝึกและอบรมเด็กและเยาวชนเชียงใหม่", nameEn: "Juvenile Training Center Chiang Mai", province: "เชียงใหม่", provinceEn: "Chiang Mai", date: "5 – 10 ม.ค. 69", dateEn: "5 – 10 Jan 26" },
+            { name: "ศูนย์ฝึกและอบรมเด็กและเยาวชนสุราษฎร์ธานี", nameEn: "Juvenile Training Center Surat Thani", province: "สุราษฎร์ธานี", provinceEn: "Surat Thani", date: "19 – 24 ม.ค. 69", dateEn: "19 – 24 Jan 26" },
+            { name: "ศูนย์ฝึกและอบรมเด็กและเยาวชนอุบลราชธานี", nameEn: "Juvenile Training Center Ubon Ratchathani", province: "อุบลราชธานี", provinceEn: "Ubon Ratchathani", date: "2 – 7, 9 – 14 ก.พ. 69", dateEn: "2 – 7, 9 – 14 Feb 26" },
+        ];
+
+        // Chart Instances
+        let genderChartInstance = null;
+        let pieChartInstance = null;
+
+        // --- Init Function ---
+        function init() {
+            lucide.createIcons();
+            updateUI();
+        }
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'th' ? 'en' : 'th';
+            updateUI();
+        }
+
+        function updateUI() {
+            const t = i18n[currentLang];
+
+            // 1. Update Static Text
+            document.getElementById('navTitle').innerText = t.navTitle;
+            document.getElementById('navSubtitle').innerText = t.navSubtitle;
+            document.getElementById('langText').innerText = t.langText;
+            document.getElementById('langIcon').innerText = currentLang === 'th' ? 'TH' : 'EN';
+            
+            document.getElementById('btnPrint').innerText = t.btnPrint;
+
+            document.getElementById('card1Title').innerText = t.card1Title;
+            document.getElementById('unitPerson').innerText = t.unitPerson;
+            
+            document.getElementById('card2Title').innerText = t.card2Title;
+            document.getElementById('unitPerson2').innerText = t.unitPerson2;
+
+            document.getElementById('card3Title').innerText = t.card3Title;
+            document.getElementById('unitCenter').innerText = t.unitCenter;
+
+            // ลบการอัพเดท Chart Titles ออก
+            // document.getElementById('chart1Title').innerText = t.chart1Title;
+            // document.getElementById('chart2Title').innerText = t.chart2Title;
+
+            document.getElementById('tableTitle').innerText = t.tableTitle;
+            document.getElementById('tableSubtitle').innerText = t.tableSubtitle;
+
+            // Table Headers
+            document.getElementById('thCenter').innerText = t.thCenter;
+            document.getElementById('thDate').innerText = t.thDate;
+            document.getElementById('thMale').innerText = t.thMale;
+            document.getElementById('thFemale').innerText = t.thFemale;
+            document.getElementById('thTotal').innerText = t.thTotal;
+            document.getElementById('footerTotal').innerText = t.footerTotal;
+
+            // 2. Update Stats (Numbers are the same, just labels if any)
+            const totalStats = data1.reduce((acc, curr) => ({
+                sample: acc.sample + curr.sample,
+                male: acc.male + curr.male,
+                female: acc.female + curr.female
+            }), { sample: 0, male: 0, female: 0 });
+
+            document.getElementById('totalSamples').innerText = totalStats.sample;
+            document.getElementById('maleCount').innerText = totalStats.male;
+            document.getElementById('centerCount').innerText = data1.length;
+            document.getElementById('totalMaleTable').innerText = totalStats.male;
+            document.getElementById('totalFemaleTable').innerText = totalStats.female;
+            document.getElementById('totalSampleTable').innerText = totalStats.sample;
+
+            // 3. Render Table
+            renderTable(t);
+
+            // 4. Update Charts
+            // ลบการเรียกใช้ renderCharts(t) ออก
+        }
+
+        function renderTable(t) {
+            const tableBody = document.getElementById('tableBody');
+            tableBody.innerHTML = ''; // Clear existing
+
+            data1.forEach((row, index) => {
+                let info = data2.find(d => d.province === row.center);
+                if (!info && row.center === "บ้านชายกรุณา") {
+                    info = data2.find(d => d.province === "สมุทรปราการ");
+                }
+
+                // Determine display values based on language
+                const displayName = currentLang === 'th' ? (info ? info.name : row.center) : (info ? info.nameEn : centerTranslations[row.center]);
+                const displayProvince = currentLang === 'th' ? (info ? info.province : '') : (info ? info.provinceEn : '');
+                const displayDate = currentLang === 'th' ? (info ? info.date : '-') : (info ? info.dateEn : '-');
+
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-indigo-50/40 transition-colors group cursor-default";
+                tr.innerHTML = `
+                    <td class="px-6 py-4 text-slate-400 font-mono text-xs">${String(index + 1).padStart(2, '0')}</td>
+                    <td class="px-6 py-4">
+                        <div class="font-bold text-slate-700 group-hover:text-indigo-700 transition-colors">${displayName}</div>
+                        <div class="flex items-center gap-1 text-xs text-slate-400 mt-0.5">
+                            <i data-lucide="map-pin" size="10"></i> ${displayProvince}
+                        </div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <span class="inline-flex items-center px-3 py-1 rounded-md text-xs font-medium bg-white border border-slate-200 text-slate-600 shadow-sm group-hover:border-indigo-200 group-hover:text-indigo-600 transition-all">
+                            <i data-lucide="calendar" size="12" class="mr-1.5 opacity-70"></i>
+                            ${displayDate}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 text-center">
+                        <span class="inline-block w-8 py-1 rounded bg-indigo-50 text-indigo-700 font-bold text-xs">${row.male}</span>
+                    </td>
+                    <td class="px-6 py-4 text-center">
+                        <span class="inline-block w-8 py-1 rounded bg-pink-50 text-pink-700 font-bold text-xs">${row.female}</span>
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                        <span class="font-bold text-slate-800 text-base">${row.sample}</span>
+                    </td>
+                `;
+                tableBody.appendChild(tr);
+            });
+            lucide.createIcons();
+        }
+
+        // ลบฟังก์ชัน renderCharts ออกทั้งหมด
+        /*
+        function renderCharts(t) {
+            // ... (code removed)
+        }
+        */
+
+        // Start
+        init();
+
+    </script>
 </body>
 </html>
