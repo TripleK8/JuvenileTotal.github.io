@@ -237,21 +237,21 @@
         // Translation Data (i18n)
         const i18n = {
              th: {
-                navTitle: "Dashboard กลุ่มตัวอย่าง", navSubtitle: "ติดตามสถานะการวิจัยและลงพื้นที่", langText: "English", btnPrint: "พิมพ์รายงาน",
-                card1Title: "กลุ่มตัวอย่างทั้งหมด", unitPerson: "คน", unitPerson2: "คน", unitCenter: "แห่ง",
-                card2Title: "สัดส่วนเพศชาย", card3Title: "ศูนย์ฝึกฯ ที่เข้าร่วม", chart1Title: "การกระจายตัวของเพศ",
-                chart2Title: "สัดส่วนตามศูนย์ฝึกฯ", tableTitle: "ตารางกำหนดการลงพื้นที่", tableSubtitle: "รายละเอียดจำนวนกลุ่มตัวอย่างและช่วงเวลาดำเนินการ",
-                thCenter: "ศูนย์ฝึกและอบรมฯ", thDate: "ช่วงเวลาดำเนินการ", thMale: "ชาย", thFemale: "หญิง",
-                thTotal: "รวม (คน)", footerTotal: "รวมทั้งหมด", male: "ชาย", female: "หญิง"
-            },
-            en: {
-                navTitle: "Sampling Dashboard", navSubtitle: "Research Status & Field Visit Tracking", langText: "ภาษาไทย", btnPrint: "Print Report",
-                card1Title: "Total Samples", unitPerson: "Persons", unitPerson2: "Persons", unitCenter: "Centers",
-                card2Title: "Male Ratio", card3Title: "Participating Centers", chart1Title: "Gender Distribution",
-                chart2Title: "Proportion by Center", tableTitle: "Field Visit Schedule", tableSubtitle: "Sample size details and operation periods",
-                thCenter: "Training Center", thDate: "Operation Period", thMale: "Male", thFemale: "Female",
-                thTotal: "Total", footerTotal: "Grand Total", male: "Male", female: "Female"
-            }
+                 navTitle: "Dashboard กลุ่มตัวอย่าง", navSubtitle: "ติดตามสถานะการวิจัยและลงพื้นที่", langText: "English", btnPrint: "พิมพ์รายงาน",
+                 card1Title: "กลุ่มตัวอย่างทั้งหมด", unitPerson: "คน", unitPerson2: "คน", unitCenter: "แห่ง",
+                 card2Title: "สัดส่วนเพศชาย", card3Title: "ศูนย์ฝึกฯ ที่เข้าร่วม", chart1Title: "การกระจายตัวของเพศ",
+                 chart2Title: "สัดส่วนตามศูนย์ฝึกฯ", tableTitle: "ตารางกำหนดการลงพื้นที่", tableSubtitle: "รายละเอียดจำนวนกลุ่มตัวอย่างและช่วงเวลาดำเนินการ",
+                 thCenter: "ศูนย์ฝึกและอบรมฯ", thDate: "ช่วงเวลาดำเนินการ", thMale: "ชาย", thFemale: "หญิง",
+                 thTotal: "รวม (คน)", footerTotal: "รวมทั้งหมด", male: "ชาย", female: "หญิง"
+             },
+             en: {
+                 navTitle: "Sampling Dashboard", navSubtitle: "Research Status & Field Visit Tracking", langText: "ภาษาไทย", btnPrint: "Print Report",
+                 card1Title: "Total Samples", unitPerson: "Persons", unitPerson2: "Persons", unitCenter: "Centers",
+                 card2Title: "Male Ratio", card3Title: "Participating Centers", chart1Title: "Gender Distribution",
+                 chart2Title: "Proportion by Center", tableTitle: "Field Visit Schedule", tableSubtitle: "Sample size details and operation periods",
+                 thCenter: "Training Center", thDate: "Operation Period", thMale: "Male", thFemale: "Female",
+                 thTotal: "Total", footerTotal: "Grand Total", male: "Male", female: "Female"
+             }
         };
 
         const centerTranslations = {
@@ -306,13 +306,14 @@
          */
         function getStandardDateRange(dateRangeStr, isEnglish) {
             if (!dateRangeStr) return '';
-            const firstRange = dateRangeStr.split(',')[0].trim();
-            const dateRegex = /(\d+)\s*(–|-)?\s*(\d+)?\s*([ก-ฮ]+\.)\s*(\d+)/;
-            const match = firstRange.match(dateRegex);
+            
+            // ใช้ Regex ที่ยืดหยุ่นขึ้นเพื่อรองรับช่วงวันเดียวและช่วงที่มีหลายช่วง (เลือกเฉพาะช่วงแรก)
+            const firstRangeMatch = dateRangeStr.match(/(\d+)\s*(–|-)?\s*(\d+)?\s*([ก-ฮ]+\.)\s*(\d+)/) || 
+                                    dateRangeStr.match(/(\d+)\s*(–|-)?\s*(\d+)?\s*(\w+)\s*(\d+)/);
 
-            if (!match) return '';
+            if (!firstRangeMatch) return '';
 
-            const [_, day1, dash, day2, monthStr, yearStr] = match;
+            const [_, day1, dash, day2, monthStr, yearStr] = firstRangeMatch;
 
             // Month mapping
             const thMonthMap = { 'ม.ค.': 0, 'ก.พ.': 1, 'มี.ค.': 2, 'เม.ย.': 3, 'พ.ค.': 4, 'มิ.ย.': 5, 
@@ -320,7 +321,11 @@
             const enMonthMap = { 'Jan': 0, 'Feb': 1, 'Mar': 2, 'Apr': 3, 'May': 4, 'Jun': 5, 
                                  'Jul': 6, 'Aug': 7, 'Sep': 8, 'Oct': 9, 'Nov': 10, 'Dec': 11 };
             
-            const month = isEnglish ? enMonthMap[monthStr] : thMonthMap[monthStr];
+            const monthMap = isEnglish ? enMonthMap : thMonthMap;
+            const month = monthMap[monthStr];
+            
+            if (month === undefined) return '';
+
             let year = parseInt(yearStr, 10);
             
             // 🔑 การแปลงปี พ.ศ. เป็น ค.ศ.
@@ -342,12 +347,16 @@
             let endDay = parseInt(day2 || day1, 10);
             if (!day2 || !dash) { endDay = startDay; } 
             
+            // สร้าง Date Object ที่ถูกต้อง
             const startDate = new Date(year, month, startDay);
-            const endDate = new Date(year, month, endDay, 23, 59, 59);
+            const endDate = new Date(year, month, endDay);
+            // เพื่อให้ endDate ครอบคลุมถึงสิ้นวันนั้น
+            endDate.setHours(23, 59, 59, 999); 
+
 
             // format to YYYY-MM-DD
-            const startStr = start.toISOString().split('T')[0];
-            const endStr = end.toISOString().split('T')[0];
+            const startStr = startDate.toISOString().split('T')[0];
+            const endStr = endDate.toISOString().split('T')[0];
             
             return `${startStr} to ${endStr}`;
         }
@@ -380,22 +389,31 @@
             const endDay = end.getDate();
             // 🔑 แปลงปี ค.ศ. ให้เป็น พ.ศ. (ใช้เลข 2 ตัวท้าย)
             const thYear = (start.getFullYear() + 543) % 100; 
-            const monthStr = thMonthNames[start.getMonth()];
-
+            
+            // กรณีเป็นวันเดียว
             if (start.toDateString() === end.toDateString()) {
-                 return `${startDay} ${monthStr} ${thYear}`;
+                 return `${startDay} ${thMonthNames[start.getMonth()]} ${String(thYear).padStart(2, '0')}`;
             }
 
+            // กรณีช่วงเดียวกันในเดือนและปีเดียวกัน
             if (start.getMonth() === end.getMonth() && start.getFullYear() === end.getFullYear()) {
-                return `${startDay} – ${endDay} ${monthStr} ${thYear}`;
+                return `${startDay} – ${endDay} ${thMonthNames[start.getMonth()]} ${String(thYear).padStart(2, '0')}`;
             }
-            return `${startDay} ${thMonthNames[start.getMonth()]} – ${endDay} ${thMonthNames[end.getMonth()]} ${thYear}`;
+            
+            // กรณีข้ามเดือน (แต่ปีเดียวกัน)
+            if (start.getFullYear() === end.getFullYear()) {
+                 return `${startDay} ${thMonthNames[start.getMonth()]} – ${endDay} ${thMonthNames[end.getMonth()]} ${String(thYear).padStart(2, '0')}`;
+            }
+
+            // กรณีข้ามปี (ไม่น่าจะเกิดในการตั้งเวลา แต่เขียนไว้เพื่อความสมบูรณ์)
+            return `${startDay} ${thMonthNames[start.getMonth()]} ${String((start.getFullYear() + 543) % 100).padStart(2, '0')} – ${endDay} ${thMonthNames[end.getMonth()]} ${String((end.getFullYear() + 543) % 100).padStart(2, '0')}`;
         }
 
         function formatDateToEnglishRange(start, end) {
             const enMonthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
             const startDay = start.getDate();
             const endDay = end.getDate();
+            // ใช้ปี ค.ศ. 2 หลัก
             const enYear = (start.getFullYear() % 100).toString().padStart(2, '0');
             const startMonthStr = enMonthNames[start.getMonth()];
             const endMonthStr = enMonthNames[end.getMonth()];
@@ -407,7 +425,12 @@
             if (start.getMonth() === end.getMonth() && start.getFullYear() === end.getFullYear()) {
                 return `${startDay} – ${endDay} ${startMonthStr} ${enYear}`;
             }
-            return `${startDay} ${startMonthStr} – ${endDay} ${endMonthStr} ${enYear}`;
+            
+            if (start.getFullYear() === end.getFullYear()) {
+                 return `${startDay} ${startMonthStr} – ${endDay} ${endMonthStr} ${enYear}`;
+            }
+
+            return `${startDay} ${startMonthStr} ${start.getFullYear() % 100} – ${endDay} ${endMonthStr} ${end.getFullYear() % 100}`;
         }
 
         // --- Admin Handlers ---
@@ -434,16 +457,16 @@
                 `;
             } else {
                  html = `
-                    <span class="text-sm font-medium text-gray-500 flex items-center">
-                        ✅ Admin
-                    </span>
-                    <button onclick="handleLogin()" class="px-4 py-2 bg-yellow-500 text-white font-semibold rounded-lg shadow-md hover:bg-yellow-600 transition-colors duration-200 text-sm">
-                        ✏️ แก้ไขวันที่
-                    </button>
-                    <button onclick="handleLogout()" class="px-4 py-2 bg-red-100 text-red-600 font-semibold rounded-lg hover:bg-red-200 transition-colors duration-200 text-sm">
-                        ออกจากระบบ
-                    </button>
-                `;
+                     <span class="text-sm font-medium text-gray-500 flex items-center">
+                         ✅ Admin
+                     </span>
+                     <button onclick="handleLogin()" class="px-4 py-2 bg-yellow-500 text-white font-semibold rounded-lg shadow-md hover:bg-yellow-600 transition-colors duration-200 text-sm">
+                         ✏️ แก้ไขวันที่
+                     </button>
+                     <button onclick="handleLogout()" class="px-4 py-2 bg-red-100 text-red-600 font-semibold rounded-lg hover:bg-red-200 transition-colors duration-200 text-sm">
+                         ออกจากระบบ
+                     </button>
+                 `;
             }
             controlsDiv.innerHTML = html;
         }
@@ -518,7 +541,7 @@
                 mode: "range", 
                 dateFormat: "Y-m-d", 
                 locale: isEnglish ? 'en' : 'th', 
-                defaultDate: standardRange, // 🔑 กำหนดเป็น ค.ศ.
+                defaultDate: standardRange ? standardRange.split(' to ') : [], // 🔑 กำหนดเป็น ค.ศ.
                 wrap: true, 
                 onClose: function(selectedDates, dateStr, instance) {
                     if (selectedDates.length === 2) { 
@@ -534,7 +557,7 @@
 
                         updateUI(); 
                     } else if (selectedDates.length === 1) {
-                         alert("กรุณาเลือกวันที่สิ้นสุดด้วย");
+                         alert(isEnglish ? "Please select an end date as well." : "กรุณาเลือกวันที่สิ้นสุดด้วย");
                     }
                     instance.destroy(); 
                 }
@@ -589,9 +612,14 @@
 
         // --- Core Render Functions ---
 
+        function toggleLanguage() {
+             currentLang = currentLang === 'th' ? 'en' : 'th';
+             updateUI();
+        }
+
         function updateUI() {
             const t = i18n[currentLang];
-            // Update Text (Omitted for brevity in response, but included in final code)
+            // Update Text 
             document.getElementById('navTitle').innerText = t.navTitle; document.getElementById('navSubtitle').innerText = t.navSubtitle;
             document.getElementById('langText').innerText = t.langText; document.getElementById('langIcon').innerText = currentLang === 'th' ? 'TH' : 'EN';
             document.getElementById('btnPrint').innerText = t.btnPrint; document.getElementById('card1Title').innerText = t.card1Title;
@@ -624,16 +652,19 @@
             const currentDataSource = isAdminMode ? tempData2 : data2;
 
             filteredData1.forEach((row, index) => {
+                // ค้นหาข้อมูลรายละเอียดจาก data2/tempData2
                 let info = currentDataSource.find(d => d.province === row.center);
                 if (!info && row.center === "บ้านชายกรุณา") {
                     info = currentDataSource.find(d => d.name.includes("บ้านชายกรุณา"));
                 }
+                
+                // ค้นหา index เดิมใน data2 เพื่อใช้ใน tempData2 ในการแก้ไข
+                const originalIndex = data2.findIndex(d => d.province === row.center || (row.center === "บ้านชายกรุณา" && d.name.includes("บ้านชายกรุณา")));
 
                 const displayName = currentLang === 'th' ? (info ? info.name : row.center) : (info ? info.nameEn : centerTranslations[row.center] || row.center);
                 const displayProvince = currentLang === 'th' ? (info ? info.province : '') : (info ? info.provinceEn : '');
                 const displayDate = currentLang === 'th' ? (info ? info.date : '-') : (info ? info.dateEn : '-');
                 
-                const originalIndex = data2.findIndex(d => d.province === row.center || (row.center === "บ้านชายกรุณา" && d.name.includes("บ้านชายกรุณา")));
 
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-indigo-50/40 transition-colors group cursor-default";
@@ -643,24 +674,24 @@
                      // 🔑 โหมดแก้ไข (Booking-like picker)
                      const dateKey = `date-input-${originalIndex}`;
                      dateCellHTML = `
-                        <div class="relative w-full inline-block" data-toggle>
-                            <span id="date-edit-${originalIndex}" 
-                                class="inline-flex items-center px-3 py-1 rounded-md text-xs font-medium bg-indigo-100 border border-indigo-300 text-indigo-700 shadow-sm cursor-pointer hover:bg-indigo-200 transition-all w-full"
-                                onclick="handleDateChange('${dateKey}', ${originalIndex}, '${currentLang}' === 'en')"
-                                >
-                                <i data-lucide="calendar" size="12" class="mr-1.5 opacity-70"></i>
-                                ${displayDate}
-                            </span>
-                            <input type="text" id="${dateKey}" style="display:none;" />
-                        </div>
+                         <div class="relative w-full inline-block" data-toggle>
+                             <span id="date-edit-${originalIndex}" 
+                                 class="inline-flex items-center px-3 py-1 rounded-md text-xs font-medium bg-indigo-100 border border-indigo-300 text-indigo-700 shadow-sm cursor-pointer hover:bg-indigo-200 transition-all w-full"
+                                 onclick="handleDateChange('${dateKey}', ${originalIndex}, '${currentLang}' === 'en')"
+                                 >
+                                 <i data-lucide="calendar" size="12" class="mr-1.5 opacity-70"></i>
+                                 ${displayDate}
+                             </span>
+                             <input type="text" id="${dateKey}" style="display:none;" />
+                         </div>
                      `;
                 } else {
                      // โหมดอ่าน
                      dateCellHTML = `
-                        <span class="inline-flex items-center px-3 py-1 rounded-md text-xs font-medium bg-white border border-slate-200 text-slate-600 shadow-sm group-hover:border-indigo-200 group-hover:text-indigo-600 transition-all">
-                            <i data-lucide="calendar" size="12" class="mr-1.5 opacity-70"></i>
-                            ${displayDate}
-                        </span>
+                         <span class="inline-flex items-center px-3 py-1 rounded-md text-xs font-medium bg-white border border-slate-200 text-slate-600 shadow-sm group-hover:border-indigo-200 group-hover:text-indigo-600 transition-all">
+                             <i data-lucide="calendar" size="12" class="mr-1.5 opacity-70"></i>
+                             ${displayDate}
+                         </span>
                      `;
                 }
 
