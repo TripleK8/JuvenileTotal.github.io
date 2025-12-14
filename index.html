@@ -169,35 +169,23 @@
       </div>
     </div>
 
-    <!-- Table -->
+    <!-- Table container (ไม่มีหัวข้อ/คำอธิบาย/ตัวเลือกช่วงวันที่แล้ว) -->
     <div class="bg-white rounded-2xl shadow-soft border border-gray-100 overflow-hidden animate-fade-in-up delay-300">
-      <div class="p-6 border-b border-gray-100 flex items-center justify-between gap-4">
-        <div>
-          <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
-            <i data-lucide="calendar-days" class="text-indigo-500"></i>
-            <span id="tableTitle">ตารางกำหนดการลงพื้นที่</span>
-          </h2>
-          <p id="tableSubtitle" class="text-sm text-slate-500 mt-1">รายละเอียดจำนวนกลุ่มตัวอย่างและช่วงเวลาดำเนินการ</p>
-        </div>
-        <span class="px-3 py-1 bg-indigo-50 text-indigo-700 rounded-lg text-xs font-semibold uppercase tracking-wider hidden md:block">Year 2025-2026</span>
-      </div>
-
       <div class="overflow-x-auto">
         <table class="w-full text-sm text-left">
           <thead class="bg-gray-50 text-slate-500 font-semibold text-xs uppercase tracking-wider">
             <tr>
               <th class="px-6 py-4 rounded-tl-lg">#</th>
               <th id="thCenter" class="px-6 py-4">ศูนย์ฝึกและอบรมฯ</th>
-
-              <!-- ✅ คอลัมน์ที่เพิ่ม (หลังศูนย์ฝึก) -->
               <th id="thBooking" class="px-6 py-4">Booking</th>
-
               <th id="thMale" class="px-6 py-4 text-center">ชาย</th>
               <th id="thFemale" class="px-6 py-4 text-center">หญิง</th>
               <th id="thTotal" class="px-6 py-4 text-right rounded-tr-lg">รวม (คน)</th>
             </tr>
           </thead>
+
           <tbody id="tableBody" class="divide-y divide-gray-100"></tbody>
+
           <tfoot class="bg-gray-50/50 font-bold text-slate-800">
             <tr>
               <td id="footerTotal" colspan="3" class="px-6 py-5 text-right text-slate-500">รวมทั้งหมด</td>
@@ -241,8 +229,6 @@
         chart2Title: "สัดส่วนตามศูนย์ฝึกฯ",
         chart2Subtitle: "จำนวนกลุ่มตัวอย่างทั้งหมดในแต่ละศูนย์ฝึกฯ",
 
-        tableTitle: "ตารางกำหนดการลงพื้นที่",
-        tableSubtitle: "รายละเอียดจำนวนกลุ่มตัวอย่างและช่วงเวลาดำเนินการ",
         thCenter: "ศูนย์ฝึกและอบรมฯ",
         thBooking: "Booking",
         thMale: "ชาย",
@@ -255,7 +241,6 @@
 
         bookingPick: "เลือกวัน",
         bookingEmpty: "ยังไม่กำหนด",
-        bookingReadonly: "ช่วงเวลาดำเนินการ",
 
         adminLogin: "🔒 Admin Login",
         adminEdit: "✏️ แก้ไข Booking",
@@ -290,8 +275,6 @@
         chart2Title: "Proportion by Center",
         chart2Subtitle: "Total samples in each training center",
 
-        tableTitle: "Field Visit Schedule",
-        tableSubtitle: "Sample size details and operation periods",
         thCenter: "Training Center",
         thBooking: "Booking",
         thMale: "Male",
@@ -304,7 +287,6 @@
 
         bookingPick: "Pick dates",
         bookingEmpty: "Not set",
-        bookingReadonly: "Operation period",
 
         adminLogin: "🔒 Admin Login",
         adminEdit: "✏️ Edit Booking",
@@ -379,7 +361,6 @@
       if (s.getMonth() === e.getMonth() && s.getFullYear() === e.getFullYear()) {
         return `${s.getDate()} – ${e.getDate()} ${thMonth[s.getMonth()]} ${yy2}`;
       }
-      // ข้ามเดือน
       return `${s.getDate()} ${thMonth[s.getMonth()]} – ${e.getDate()} ${thMonth[e.getMonth()]} ${yy2}`;
     }
 
@@ -412,14 +393,12 @@
       if (raw) {
         bookingRangesByCenter = JSON.parse(raw);
       } else {
-        // ค่าเริ่มต้น (ใส่ได้/แก้ได้ใน Admin)
         bookingRangesByCenter = {
           "ระยอง": { start: "2025-11-17", end: "2025-11-22" },
           "บ้านชายกรุณา": { start: "2025-12-08", end: "2025-12-13" },
           "ราชบุรี": { start: "2025-12-15", end: "2025-12-20" },
           "เชียงใหม่": { start: "2026-01-05", end: "2026-01-10" },
           "สุราษฎร์ธานี": { start: "2026-01-19", end: "2026-01-24" },
-          // ตัวอย่าง: เลือกช่วงแรก (ถ้าต้องการหลายช่วง ค่อยเพิ่ม logic ได้)
           "อุบลราชธานี": { start: "2026-02-02", end: "2026-02-07" }
         };
         localStorage.setItem(STORAGE_KEY, JSON.stringify(bookingRangesByCenter));
@@ -471,7 +450,6 @@
     function handleLogin() {
       const t = i18n[currentLang];
 
-      // ถ้าล็อกอินแล้ว แต่ยังไม่เข้าโหมดแก้ไข
       if (isLoggedIn && !isAdminMode) {
         isAdminMode = true;
         tempBookingRangesByCenter = JSON.parse(JSON.stringify(bookingRangesByCenter));
@@ -578,13 +556,9 @@
         const rangeSource = isAdminMode ? tempBookingRangesByCenter : bookingRangesByCenter;
         const range = rangeSource[row.center];
         const rangeText = displayRangeForLang(range);
-        const emptyText = t.bookingEmpty;
 
         const hiddenId = `booking-input-${row.center}-${idx}`.replace(/\s+/g, "-");
 
-        // ✅ Booking column logic:
-        // - Admin mode: show clickable badge (opens flatpickr)
-        // - Normal mode: show readonly badge (operation period)
         const bookingCellHTML = isAdminMode
           ? `
             <div class="flex items-center gap-2">
@@ -598,7 +572,7 @@
                 ${rangeText ? rangeText : t.bookingPick}
               </button>
               <input id="${hiddenId}" type="text" class="hidden" />
-              ${rangeText ? "" : `<span class="text-xs text-slate-400">${emptyText}</span>`}
+              ${rangeText ? "" : `<span class="text-xs text-slate-400">${t.bookingEmpty}</span>`}
             </div>
           `
           : `
@@ -617,7 +591,6 @@
             </div>
           </td>
 
-          <!-- ✅ คอลัมน์ Booking (หลังศูนย์ฝึก) -->
           <td class="px-6 py-4">
             ${bookingCellHTML}
           </td>
@@ -640,7 +613,6 @@
     }
 
     function renderCharts(t, totalStats) {
-      // 1) Gender chart
       if (genderChartInstance) genderChartInstance.destroy();
       const genderCtx = document.getElementById('genderChart').getContext('2d');
       genderChartInstance = new Chart(genderCtx, {
@@ -667,9 +639,7 @@
         }
       });
 
-      // 2) Center stacked bar
       if (centerChartInstance) centerChartInstance.destroy();
-
       const labels = data1.map(d => currentLang === 'th' ? d.center : (centerTranslations[d.center] || d.center));
       const centerMales = data1.map(d => d.male);
       const centerFemales = data1.map(d => d.female);
@@ -701,7 +671,6 @@
     function updateUI() {
       const t = i18n[currentLang];
 
-      // Text
       document.getElementById('navTitle').innerText = t.navTitle;
       document.getElementById('navSubtitle').innerText = t.navSubtitle;
       document.getElementById('langText').innerText = t.langText;
@@ -720,8 +689,6 @@
       document.getElementById('chart2Title').childNodes[2].textContent = " " + t.chart2Title;
       document.getElementById('chart2Subtitle').innerText = t.chart2Subtitle;
 
-      document.getElementById('tableTitle').innerText = t.tableTitle;
-      document.getElementById('tableSubtitle').innerText = t.tableSubtitle;
       document.getElementById('thCenter').innerText = t.thCenter;
       document.getElementById('thBooking').innerText = t.thBooking;
       document.getElementById('thMale').innerText = t.thMale;
@@ -729,10 +696,8 @@
       document.getElementById('thTotal').innerText = t.thTotal;
       document.getElementById('footerTotal').innerText = t.footerTotal;
 
-      // Admin buttons
       renderAdminControls();
 
-      // Stats
       const totalStats = calculateTotalStats(data1);
       document.getElementById('totalSamples').innerText = totalStats.sample;
       document.getElementById('maleCount').innerText = totalStats.male;
