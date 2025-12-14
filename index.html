@@ -224,506 +224,518 @@
 
     </main>
 
-<script>
-    // รหัสผ่านสำหรับ Admin
-    const ADMIN_PASSWORD = "admin456"; 
-    const STORAGE_KEY = 'dashboardDates'; 
+    <script>
+        // รหัสผ่านสำหรับ Admin
+        const ADMIN_PASSWORD = "admin456"; 
+        const STORAGE_KEY = 'dashboardDates'; 
 
-    // Global States
-    let currentLang = 'th';
-    let isLoggedIn = false;
-    let isAdminMode = false;
+        // Global States
+        let currentLang = 'th';
+        let isLoggedIn = false;
+        let isAdminMode = false;
 
-    // Translation Data (i18n)
-    const i18n = {
-         th: {
-            navTitle: "Dashboard กลุ่มตัวอย่าง", navSubtitle: "ติดตามสถานะการวิจัยและลงพื้นที่", langText: "English", btnPrint: "พิมพ์รายงาน",
-            card1Title: "กลุ่มตัวอย่างทั้งหมด", unitPerson: "คน", unitPerson2: "คน", unitCenter: "แห่ง",
-            card2Title: "สัดส่วนเพศชาย", card3Title: "ศูนย์ฝึกฯ ที่เข้าร่วม", chart1Title: "การกระจายตัวของเพศ",
-            chart2Title: "สัดส่วนตามศูนย์ฝึกฯ", tableTitle: "ตารางกำหนดการลงพื้นที่", tableSubtitle: "รายละเอียดจำนวนกลุ่มตัวอย่างและช่วงเวลาดำเนินการ",
-            thCenter: "ศูนย์ฝึกและอบรมฯ", thDate: "ช่วงเวลาดำเนินการ", thMale: "ชาย", thFemale: "หญิง",
-            thTotal: "รวม (คน)", footerTotal: "รวมทั้งหมด", male: "ชาย", female: "หญิง"
-        },
-        en: {
-            navTitle: "Sampling Dashboard", navSubtitle: "Research Status & Field Visit Tracking", langText: "ภาษาไทย", btnPrint: "Print Report",
-            card1Title: "Total Samples", unitPerson: "Persons", unitPerson2: "Persons", unitCenter: "Centers",
-            card2Title: "Male Ratio", card3Title: "Participating Centers", chart1Title: "Gender Distribution",
-            chart2Title: "Proportion by Center", tableTitle: "Field Visit Schedule", tableSubtitle: "Sample size details and operation periods",
-            thCenter: "Training Center", thDate: "Operation Period", thMale: "Male", thFemale: "Female",
-            thTotal: "Total", footerTotal: "Grand Total", male: "Male", female: "Female"
-        }
-    };
+        // Translation Data (i18n)
+        const i18n = {
+             th: {
+                navTitle: "Dashboard กลุ่มตัวอย่าง", navSubtitle: "ติดตามสถานะการวิจัยและลงพื้นที่", langText: "English", btnPrint: "พิมพ์รายงาน",
+                card1Title: "กลุ่มตัวอย่างทั้งหมด", unitPerson: "คน", unitPerson2: "คน", unitCenter: "แห่ง",
+                card2Title: "สัดส่วนเพศชาย", card3Title: "ศูนย์ฝึกฯ ที่เข้าร่วม", chart1Title: "การกระจายตัวของเพศ",
+                chart2Title: "สัดส่วนตามศูนย์ฝึกฯ", tableTitle: "ตารางกำหนดการลงพื้นที่", tableSubtitle: "รายละเอียดจำนวนกลุ่มตัวอย่างและช่วงเวลาดำเนินการ",
+                thCenter: "ศูนย์ฝึกและอบรมฯ", thDate: "ช่วงเวลาดำเนินการ", thMale: "ชาย", thFemale: "หญิง",
+                thTotal: "รวม (คน)", footerTotal: "รวมทั้งหมด", male: "ชาย", female: "หญิง"
+            },
+            en: {
+                navTitle: "Sampling Dashboard", navSubtitle: "Research Status & Field Visit Tracking", langText: "ภาษาไทย", btnPrint: "Print Report",
+                card1Title: "Total Samples", unitPerson: "Persons", unitPerson2: "Persons", unitCenter: "Centers",
+                card2Title: "Male Ratio", card3Title: "Participating Centers", chart1Title: "Gender Distribution",
+                chart2Title: "Proportion by Center", tableTitle: "Field Visit Schedule", tableSubtitle: "Sample size details and operation periods",
+                thCenter: "Training Center", thDate: "Operation Period", thMale: "Male", thFemale: "Female",
+                thTotal: "Total", footerTotal: "Grand Total", male: "Male", female: "Female"
+            }
+        };
 
-    const centerTranslations = {
-        "ระยอง": "Rayong", "ราชบุรี": "Ratchaburi", "บ้านชายกรุณา": "Ban Chai Karuna", 
-        "เชียงใหม่": "Chiang Mai", "สุราษฎร์ธานี": "Surat Thani", "อุบลราชธานี": "Ubon Ratchathani"
-    };
+        const centerTranslations = {
+            "ระยอง": "Rayong", "ราชบุรี": "Ratchaburi", "บ้านชายกรุณา": "Ban Chai Karuna", 
+            "เชียงใหม่": "Chiang Mai", "สุราษฎร์ธานี": "Surat Thani", "อุบลราชธานี": "Ubon Ratchathani"
+        };
 
-    const data1 = [
-        { center: "ระยอง", sample: 18, male: 14, female: 4 }, { center: "บ้านชายกรุณา", sample: 47, male: 47, female: 0 }, 
-        { center: "ราชบุรี", sample: 41, male: 40, female: 1 }, { center: "เชียงใหม่", sample: 60, male: 56, female: 4 }, 
-        { center: "สุราษฎร์ธานี", sample: 66, male: 60, female: 6 }, { center: "อุบลราชธานี", sample: 140, male: 131, female: 9 },
-    ];
+        const data1 = [
+            { center: "ระยอง", sample: 18, male: 14, female: 4 }, { center: "บ้านชายกรุณา", sample: 47, male: 47, female: 0 }, 
+            { center: "ราชบุรี", sample: 41, male: 40, female: 1 }, { center: "เชียงใหม่", sample: 60, male: 56, female: 4 }, 
+            { center: "สุราษฎร์ธานี", sample: 66, male: 60, female: 6 }, { center: "อุบลราชธานี", sample: 140, male: 131, female: 9 },
+        ];
 
-    const initialData2 = [
-        { id: 1, name: "ศูนย์ฝึกและอบรมเด็กและเยาวชนระยอง", nameEn: "Juvenile Training Center Rayong", province: "ระยอง", provinceEn: "Rayong", date: "17 – 22 พ.ย. 68", dateEn: "17 – 22 Nov 25" },
-        { id: 2, name: "ศูนย์ฝึกและอบรมเด็กและเยาวชนราชบุรี", nameEn: "Juvenile Training Center Ratchaburi", province: "ราชบุรี", provinceEn: "Ratchaburi", date: "15 – 20 ธ.ค. 68", dateEn: "15 – 20 Dec 25" },
-        { id: 3, name: "ศูนย์ฝึกและอบรมเด็กและเยาวชนบ้านชายกรุณา", nameEn: "Ban Chai Karuna Training Center", province: "สมุทรปราการ", provinceEn: "Samut Prakan", date: "8 – 13 ธ.ค. 68", dateEn: "8 – 13 Dec 25" },
-        { id: 4, name: "ศูนย์ฝึกและอบรมเด็กและเยาวชนเชียงใหม่", nameEn: "Juvenile Training Center Chiang Mai", province: "เชียงใหม่", provinceEn: "Chiang Mai", date: "5 – 10 ม.ค. 69", dateEn: "5 – 10 Jan 26" },
-        { id: 5, name: "ศูนย์ฝึกและอบรมเด็กและเยาวชนสุราษฎร์ธานี", nameEn: "Juvenile Training Center Surat Thani", province: "สุราษฎร์ธานี", provinceEn: "Surat Thani", date: "19 – 24 ม.ค. 69", dateEn: "19 – 24 Jan 26" },
-        { id: 6, name: "ศูนย์ฝึกและอบรมเด็กและเยาวชนอุบลราชธานี", nameEn: "Juvenile Training Center Ubon Ratchathani", province: "อุบลราชธานี", provinceEn: "Ubon Ratchathani", date: "2 – 7, 9 – 14 ก.พ. 69", dateEn: "2 – 7, 9 – 14 Feb 26" },
-    ];
-    
-    // 🔑 Global Data/State for filtering and editing
-    let data2 = []; 
-    let tempData2 = []; 
-    let filteredData1 = data1;
-    let globalTotalStats = {}; 
-
-    let genderChartInstance = null;
-    let pieChartInstance = null;
-
-    // --- Data Loading and Storage ---
-
-    function loadData() {
-        const savedData = localStorage.getItem(STORAGE_KEY);
-        if (savedData) {
-            data2 = JSON.parse(savedData);
-        } else {
-            data2 = initialData2;
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(data2));
-        }
-        tempData2 = JSON.parse(JSON.stringify(data2)); 
-        globalTotalStats = calculateTotalStats(data1);
-        filteredData1 = data1; 
-    }
-
-    // --- Date Parsing and Utilities ---
-
-    /**
-     * แปลงช่วงวันที่ไทยเป็น Date Object
-     * (ใช้สำหรับ Logic การกรองและการตั้งค่าเริ่มต้น)
-     */
-    function parseThaiDateRange(dateRangeStr) {
-        if (!dateRangeStr) { return null; }
-        const firstRange = dateRangeStr.split(',')[0].trim();
-        // Updated regex to handle day ranges like "17 – 22" or single day "17"
-        const dateRegex = /(\d+)\s*(–|-)?\s*(\d+)?\s*([ก-ฮ]+\.)\s*(\d+)/;
-        const match = firstRange.match(dateRegex);
-
-        if (!match) { return null; }
-
-        const [_, day1, dash, day2, monthStr, yearStr] = match;
-
-        const monthMap = { 'ม.ค.': 0, 'ก.พ.': 1, 'มี.ค.': 2, 'เม.ย.': 3, 'พ.ค.': 4, 'มิ.ย.': 5, 
-                           'ก.ค.': 6, 'ส.ค.': 7, 'ก.ย.': 8, 'ต.ค.': 9, 'พ.ย.': 10, 'ธ.ค.': 11 };
+        const initialData2 = [
+            { id: 1, name: "ศูนย์ฝึกและอบรมเด็กและเยาวชนระยอง", nameEn: "Juvenile Training Center Rayong", province: "ระยอง", provinceEn: "Rayong", date: "17 – 22 พ.ย. 68", dateEn: "17 – 22 Nov 25" },
+            { id: 2, name: "ศูนย์ฝึกและอบรมเด็กและเยาวชนราชบุรี", nameEn: "Juvenile Training Center Ratchaburi", province: "ราชบุรี", provinceEn: "Ratchaburi", date: "15 – 20 ธ.ค. 68", dateEn: "15 – 20 Dec 25" },
+            { id: 3, name: "ศูนย์ฝึกและอบรมเด็กและเยาวชนบ้านชายกรุณา", nameEn: "Ban Chai Karuna Training Center", province: "สมุทรปราการ", provinceEn: "Samut Prakan", date: "8 – 13 ธ.ค. 68", dateEn: "8 – 13 Dec 25" },
+            { id: 4, name: "ศูนย์ฝึกและอบรมเด็กและเยาวชนเชียงใหม่", nameEn: "Juvenile Training Center Chiang Mai", province: "เชียงใหม่", provinceEn: "Chiang Mai", date: "5 – 10 ม.ค. 69", dateEn: "5 – 10 Jan 26" },
+            { id: 5, name: "ศูนย์ฝึกและอบรมเด็กและเยาวชนสุราษฎร์ธานี", nameEn: "Juvenile Training Center Surat Thani", province: "สุราษฎร์ธานี", provinceEn: "Surat Thani", date: "19 – 24 ม.ค. 69", dateEn: "19 – 24 Jan 26" },
+            { id: 6, name: "ศูนย์ฝึกและอบรมเด็กและเยาวชนอุบลราชธานี", nameEn: "Juvenile Training Center Ubon Ratchathani", province: "อุบลราชธานี", provinceEn: "Ubon Ratchathani", date: "2 – 7, 9 – 14 ก.พ. 69", dateEn: "2 – 7, 9 – 14 Feb 26" },
+        ];
         
-        const month = monthMap[monthStr];
-        let year = parseInt(yearStr, 10);
-        
-        // แปลงปี พ.ศ. ให้เป็น ค.ศ.
-        if (year > 50 && year < 100) { year += 2000; }
-        if (year < 2500) { year += 543; } 
+        let data2 = []; 
+        let tempData2 = []; 
+        let filteredData1 = data1;
+        let globalTotalStats = {}; 
 
-        let startDay = parseInt(day1, 10);
-        let endDay = parseInt(day2 || day1, 10);
-        if (!day2 || !dash) { endDay = startDay; } // ถ้าไม่มี dash/day2 แปลว่าวันเดียว
-        
-        const startDate = new Date(year, month, startDay);
-        const endDate = new Date(year, month, endDay, 23, 59, 59);
+        let genderChartInstance = null;
+        let pieChartInstance = null;
 
-        return { startDate, endDate };
-    }
-    
-    /**
-     * แปลงช่วงวันที่ไทย/อังกฤษ เป็น String ในรูปแบบ YYYY-MM-DD/YYYY-MM-DD
-     * เพื่อให้ Flatpickr เข้าใจใน defaultDate
-     */
-    function getStandardDateRange(dateRangeStr, isEnglish) {
-        // ใช้ logic parseThaiDateRange เพื่อให้ได้ Date objects
-        const parsed = parseThaiDateRange(dateRangeStr);
-        if (!parsed) return '';
+        // --- Data Loading and Storage ---
 
-        const start = parsed.startDate;
-        const end = parsed.endDate;
-
-        // format to YYYY-MM-DD
-        const startStr = start.toISOString().split('T')[0];
-        const endStr = end.toISOString().split('T')[0];
-        
-        return `${startStr} to ${endStr}`;
-    }
-
-    function calculateTotalStats(data) {
-        return data.reduce((acc, curr) => ({
-            sample: acc.sample + curr.sample,
-            male: acc.male + curr.male,
-            female: acc.female + curr.female
-        }), { sample: 0, male: 0, female: 0 });
-    }
-
-    function formatDateToThaiRange(start, end) {
-        const thMonthNames = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
-        const startDay = start.getDate();
-        const endDay = end.getDate();
-        const thYear = (start.getFullYear() + 543) % 100; 
-        const monthStr = thMonthNames[start.getMonth()];
-
-        if (start.toDateString() === end.toDateString()) {
-             return `${startDay} ${monthStr} ${thYear}`;
-        }
-
-        if (start.getMonth() === end.getMonth() && start.getFullYear() === end.getFullYear()) {
-            return `${startDay} – ${endDay} ${monthStr} ${thYear}`;
-        }
-        return `${startDay} ${thMonthNames[start.getMonth()]} – ${endDay} ${thMonthNames[end.getMonth()]} ${thYear}`;
-    }
-
-    function formatDateToEnglishRange(start, end) {
-        const enMonthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-        const startDay = start.getDate();
-        const endDay = end.getDate();
-        const enYear = (start.getFullYear() % 100).toString().padStart(2, '0');
-        const startMonthStr = enMonthNames[start.getMonth()];
-        const endMonthStr = enMonthNames[end.getMonth()];
-
-        if (start.toDateString() === end.toDateString()) {
-             return `${startDay} ${startMonthStr} ${enYear}`;
-        }
-
-        if (start.getMonth() === end.getMonth() && start.getFullYear() === end.getFullYear()) {
-            return `${startDay} – ${endDay} ${startMonthStr} ${enYear}`;
-        }
-        return `${startDay} ${startMonthStr} – ${endDay} ${endMonthStr} ${enYear}`;
-    }
-
-    // --- Admin Handlers ---
-
-    function renderAdminControls() {
-        const controlsDiv = document.getElementById('admin-controls-nav');
-        let html = '';
-
-        if (!isLoggedIn) {
-            html = `<button onclick="handleLogin()" class="px-4 py-2 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700 transition-colors duration-200 text-sm">
-                        🔒 Admin Login
-                    </button>`;
-        } else if (isAdminMode) {
-            html = `
-                <button onclick="handleSave()" class="px-4 py-2 bg-emerald-600 text-white font-semibold rounded-lg shadow-md hover:bg-emerald-700 transition-colors duration-200 text-sm">
-                    💾 บันทึกการแก้ไข
-                </button>
-                <button onclick="handleCancel()" class="px-4 py-2 border border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-100 transition-colors duration-200 text-sm">
-                    ยกเลิก
-                </button>
-                <button onclick="handleLogout()" class="px-4 py-2 bg-red-100 text-red-600 font-semibold rounded-lg hover:bg-red-200 transition-colors duration-200 text-sm">
-                    ออกจากระบบ
-                </button>
-            `;
-        } else {
-             html = `
-                <span class="text-sm font-medium text-gray-500 flex items-center">
-                    ✅ Admin
-                </span>
-                <button onclick="handleLogin()" class="px-4 py-2 bg-yellow-500 text-white font-semibold rounded-lg shadow-md hover:bg-yellow-600 transition-colors duration-200 text-sm">
-                    ✏️ แก้ไขวันที่
-                </button>
-                <button onclick="handleLogout()" class="px-4 py-2 bg-red-100 text-red-600 font-semibold rounded-lg hover:bg-red-200 transition-colors duration-200 text-sm">
-                    ออกจากระบบ
-                </button>
-            `;
-        }
-        controlsDiv.innerHTML = html;
-    }
-
-    function handleLogin() {
-        if (isLoggedIn && !isAdminMode) {
-            isAdminMode = true;
+        function loadData() {
+            const savedData = localStorage.getItem(STORAGE_KEY);
+            if (savedData) {
+                data2 = JSON.parse(savedData);
+            } else {
+                data2 = initialData2;
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(data2));
+            }
             tempData2 = JSON.parse(JSON.stringify(data2)); 
-            updateUI();
-            return;
+            globalTotalStats = calculateTotalStats(data1);
+            filteredData1 = data1; 
         }
 
-        const password = prompt("กรุณาใส่รหัสผ่านผู้ดูแลระบบ:");
-        if (password === ADMIN_PASSWORD) {
-            isLoggedIn = true;
-            isAdminMode = true; 
-            tempData2 = JSON.parse(JSON.stringify(data2));
-            alert("ล็อกอินสำเร็จ! คุณเข้าสู่โหมดแก้ไขแล้ว");
-        } else if (password !== null) {
-            alert("รหัสผ่านไม่ถูกต้อง");
-        }
-        updateUI();
-    }
-
-    function handleCancel() {
-        const confirmation = window.confirm("คุณต้องการยกเลิกการแก้ไขและออกจากโหมดแก้ไขหรือไม่? การเปลี่ยนแปลงจะไม่ถูกบันทึก");
-        if (confirmation) {
-            isAdminMode = false;
-            tempData2 = JSON.parse(JSON.stringify(data2)); 
-            resetFilter(false);
-        }
-    }
-
-    function handleSave() {
-        const confirmation = window.confirm("คุณต้องการบันทึกการเปลี่ยนแปลงช่วงวันที่หรือไม่?");
-        if (confirmation) {
-            data2 = JSON.parse(JSON.stringify(tempData2));
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(data2));
-            isAdminMode = false;
-            alert("บันทึกช่วงวันที่เรียบร้อยแล้ว!");
-            resetFilter(false); 
-        }
-    }
-
-    function handleLogout() {
-        const confirmation = window.confirm("คุณต้องการออกจากระบบ Admin หรือไม่?");
-        if (confirmation) {
-            isLoggedIn = false;
-            isAdminMode = false;
-            tempData2 = JSON.parse(JSON.stringify(data2)); 
-            alert("ออกจากระบบแล้ว");
-            resetFilter(false);
-        }
-    }
-    
-    /**
-     * 🔑 จัดการการคลิกแก้ไขวันที่ในตาราง (Booking-like)
-     */
-    function handleDateChange(elementId, index, isEnglish) {
-        const currentData = isAdminMode ? tempData2[index] : data2[index];
-        const dateKey = isEnglish ? currentData.dateEn : currentData.date;
+        // --- Date Parsing and Utilities ---
         
-        // 🔑 ดีบัก: แปลงเป็นรูปแบบมาตรฐานก่อนใส่ใน defaultDate
-        const standardRange = getStandardDateRange(dateKey, isEnglish);
+        /**
+         * แปลงช่วงวันที่ไทย/อังกฤษ เป็น String ในรูปแบบ YYYY-MM-DD/YYYY-MM-DD
+         * เพื่อให้ Flatpickr เข้าใจใน defaultDate
+         * 🔑 แก้ไข: ให้ฟังก์ชันนี้รับผิดชอบในการแปลง Phutthasak (พ.ศ.) เป็น Christian Era (ค.ศ.)
+         */
+        function getStandardDateRange(dateRangeStr, isEnglish) {
+            if (!dateRangeStr) return '';
+            const firstRange = dateRangeStr.split(',')[0].trim();
+            const dateRegex = /(\d+)\s*(–|-)?\s*(\d+)?\s*([ก-ฮ]+\.)\s*(\d+)/;
+            const match = firstRange.match(dateRegex);
 
-        const inputElement = document.getElementById(elementId);
-        // ทำลาย instance เก่าถ้ามี
-        if (inputElement._flatpickr) {
-            inputElement._flatpickr.destroy();
-        }
+            if (!match) return '';
 
-        const fpInstance = flatpickr(inputElement, {
-            mode: "range", 
-            dateFormat: "Y-m-d", 
-            locale: isEnglish ? 'en' : 'th', 
-            defaultDate: standardRange, // 🔑 ใช้ standardRange ที่ Flatpickr เข้าใจ
-            wrap: true, 
-            onClose: function(selectedDates, dateStr, instance) {
-                if (selectedDates.length === 2) { 
-                    const start = selectedDates[0];
-                    const end = selectedDates[1];
-                    
-                    // แปลงและอัปเดตข้อมูลชั่วคราว (tempData2)
-                    const newThaiDate = formatDateToThaiRange(start, end);
-                    const newEnglishDate = formatDateToEnglishRange(start, end);
-                    
-                    tempData2[index].date = newThaiDate;
-                    tempData2[index].dateEn = newEnglishDate;
+            const [_, day1, dash, day2, monthStr, yearStr] = match;
 
-                    updateUI(); 
-                } else if (selectedDates.length === 1) {
-                     alert("กรุณาเลือกวันที่สิ้นสุดด้วย");
+            // Month mapping
+            const thMonthMap = { 'ม.ค.': 0, 'ก.พ.': 1, 'มี.ค.': 2, 'เม.ย.': 3, 'พ.ค.': 4, 'มิ.ย.': 5, 
+                                 'ก.ค.': 6, 'ส.ค.': 7, 'ก.ย.': 8, 'ต.ค.': 9, 'พ.ย.': 10, 'ธ.ค.': 11 };
+            const enMonthMap = { 'Jan': 0, 'Feb': 1, 'Mar': 2, 'Apr': 3, 'May': 4, 'Jun': 5, 
+                                 'Jul': 6, 'Aug': 7, 'Sep': 8, 'Oct': 9, 'Nov': 10, 'Dec': 11 };
+            
+            const month = isEnglish ? enMonthMap[monthStr] : thMonthMap[monthStr];
+            let year = parseInt(yearStr, 10);
+            
+            // 🔑 การแปลงปี พ.ศ. เป็น ค.ศ.
+            if (!isEnglish) {
+                if (year < 100) { // เป็นรูปแบบ yy เช่น 68, 69
+                    year += 2000;
                 }
-                instance.destroy(); 
+                if (year > 2400) { // เป็น พ.ศ. 2568, 2569
+                    year -= 543;
+                }
+            } else {
+                 // ถ้าเป็นภาษาอังกฤษ (en) และปีเป็นเลข 2 หลัก (25, 26) ให้แปลงเป็น 2025, 2026
+                 if (year < 100) {
+                     year += 2000;
+                 }
             }
-        });
-        fpInstance.open();
-    }
+            
+            let startDay = parseInt(day1, 10);
+            let endDay = parseInt(day2 || day1, 10);
+            if (!day2 || !dash) { endDay = startDay; } 
+            
+            const startDate = new Date(year, month, startDay);
+            const endDate = new Date(year, month, endDay, 23, 59, 59);
 
-    // --- Filter Logic ---
-
-    function applyFilter(startFilterDate, endFilterDate) {
-        if (!startFilterDate || !endFilterDate) {
-            return resetFilter(false);
+            // format to YYYY-MM-DD
+            const startStr = start.toISOString().split('T')[0];
+            const endStr = end.toISOString().split('T')[0];
+            
+            return `${startStr} to ${endStr}`;
         }
 
-        const currentDataSource = isAdminMode ? tempData2 : data2;
 
-        const filteredCentersDetails = currentDataSource.filter(detail => {
-            const dateRange = parseThaiDateRange(detail.date);
-            if (!dateRange) return false;
-
-            const overlap = dateRange.startDate <= endFilterDate && dateRange.endDate >= startFilterDate;
-            return overlap;
-        });
-
-        const matchingCenterKeys = filteredCentersDetails.map(detail => detail.province || detail.name);
-
-        filteredData1 = data1.filter(stat => {
-            const centerKey = stat.center;
+        function parseThaiDateRange(dateRangeStr) {
+            // Re-use logic from getStandardDateRange to simplify date parsing and conversion
+            const standardRange = getStandardDateRange(dateRangeStr, false); // Get standard range using Thai format parsing
+            if (!standardRange) return null;
             
-            if (centerKey === "บ้านชายกรุณา") {
-                return matchingCenterKeys.includes("สมุทรปราการ") || matchingCenterKeys.some(name => name.includes("บ้านชายกรุณา"));
-            }
-            return matchingCenterKeys.includes(centerKey);
-        });
+            const [startStr, , endStr] = standardRange.split(' ');
+            
+            const startDate = new Date(startStr);
+            const endDate = new Date(endStr + 'T23:59:59'); // Set time to end of day
 
-        globalTotalStats = calculateTotalStats(filteredData1);
-        updateUI();
-    }
-
-    function resetFilter(shouldClearPicker = true) {
-        filteredData1 = data1;
-        globalTotalStats = calculateTotalStats(data1);
+            return { startDate, endDate };
+        }
         
-        if (shouldClearPicker) {
-            const fp = document.getElementById('dateRangePicker')._flatpickr;
-            if (fp) {
-                fp.clear();
+        function calculateTotalStats(data) {
+            return data.reduce((acc, curr) => ({
+                sample: acc.sample + curr.sample,
+                male: acc.male + curr.male,
+                female: acc.female + curr.female
+            }), { sample: 0, male: 0, female: 0 });
+        }
+
+        function formatDateToThaiRange(start, end) {
+            const thMonthNames = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+            const startDay = start.getDate();
+            const endDay = end.getDate();
+            // 🔑 แปลงปี ค.ศ. ให้เป็น พ.ศ. (ใช้เลข 2 ตัวท้าย)
+            const thYear = (start.getFullYear() + 543) % 100; 
+            const monthStr = thMonthNames[start.getMonth()];
+
+            if (start.toDateString() === end.toDateString()) {
+                 return `${startDay} ${monthStr} ${thYear}`;
+            }
+
+            if (start.getMonth() === end.getMonth() && start.getFullYear() === end.getFullYear()) {
+                return `${startDay} – ${endDay} ${monthStr} ${thYear}`;
+            }
+            return `${startDay} ${thMonthNames[start.getMonth()]} – ${endDay} ${thMonthNames[end.getMonth()]} ${thYear}`;
+        }
+
+        function formatDateToEnglishRange(start, end) {
+            const enMonthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            const startDay = start.getDate();
+            const endDay = end.getDate();
+            const enYear = (start.getFullYear() % 100).toString().padStart(2, '0');
+            const startMonthStr = enMonthNames[start.getMonth()];
+            const endMonthStr = enMonthNames[end.getMonth()];
+
+            if (start.toDateString() === end.toDateString()) {
+                 return `${startDay} ${startMonthStr} ${enYear}`;
+            }
+
+            if (start.getMonth() === end.getMonth() && start.getFullYear() === end.getFullYear()) {
+                return `${startDay} – ${endDay} ${startMonthStr} ${enYear}`;
+            }
+            return `${startDay} ${startMonthStr} – ${endDay} ${endMonthStr} ${enYear}`;
+        }
+
+        // --- Admin Handlers ---
+
+        function renderAdminControls() {
+            const controlsDiv = document.getElementById('admin-controls-nav');
+            let html = '';
+
+            if (!isLoggedIn) {
+                html = `<button onclick="handleLogin()" class="px-4 py-2 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700 transition-colors duration-200 text-sm">
+                            🔒 Admin Login
+                        </button>`;
+            } else if (isAdminMode) {
+                html = `
+                    <button onclick="handleSave()" class="px-4 py-2 bg-emerald-600 text-white font-semibold rounded-lg shadow-md hover:bg-emerald-700 transition-colors duration-200 text-sm">
+                        💾 บันทึกการแก้ไข
+                    </button>
+                    <button onclick="handleCancel()" class="px-4 py-2 border border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-100 transition-colors duration-200 text-sm">
+                        ยกเลิก
+                    </button>
+                    <button onclick="handleLogout()" class="px-4 py-2 bg-red-100 text-red-600 font-semibold rounded-lg hover:bg-red-200 transition-colors duration-200 text-sm">
+                        ออกจากระบบ
+                    </button>
+                `;
+            } else {
+                 html = `
+                    <span class="text-sm font-medium text-gray-500 flex items-center">
+                        ✅ Admin
+                    </span>
+                    <button onclick="handleLogin()" class="px-4 py-2 bg-yellow-500 text-white font-semibold rounded-lg shadow-md hover:bg-yellow-600 transition-colors duration-200 text-sm">
+                        ✏️ แก้ไขวันที่
+                    </button>
+                    <button onclick="handleLogout()" class="px-4 py-2 bg-red-100 text-red-600 font-semibold rounded-lg hover:bg-red-200 transition-colors duration-200 text-sm">
+                        ออกจากระบบ
+                    </button>
+                `;
+            }
+            controlsDiv.innerHTML = html;
+        }
+
+        function handleLogin() {
+            if (isLoggedIn && !isAdminMode) {
+                isAdminMode = true;
+                tempData2 = JSON.parse(JSON.stringify(data2)); 
+                updateUI();
+                return;
+            }
+
+            const password = prompt("กรุณาใส่รหัสผ่านผู้ดูแลระบบ:");
+            if (password === ADMIN_PASSWORD) {
+                isLoggedIn = true;
+                isAdminMode = true; 
+                tempData2 = JSON.parse(JSON.stringify(data2));
+                alert("ล็อกอินสำเร็จ! คุณเข้าสู่โหมดแก้ไขแล้ว");
+            } else if (password !== null) {
+                alert("รหัสผ่านไม่ถูกต้อง");
+            }
+            updateUI();
+        }
+
+        function handleCancel() {
+            const confirmation = window.confirm("คุณต้องการยกเลิกการแก้ไขและออกจากโหมดแก้ไขหรือไม่? การเปลี่ยนแปลงจะไม่ถูกบันทึก");
+            if (confirmation) {
+                isAdminMode = false;
+                tempData2 = JSON.parse(JSON.stringify(data2)); 
+                resetFilter(false);
             }
         }
-        updateUI();
-    }
 
-    // --- Core Render Functions ---
+        function handleSave() {
+            const confirmation = window.confirm("คุณต้องการบันทึกการเปลี่ยนแปลงช่วงวันที่หรือไม่?");
+            if (confirmation) {
+                data2 = JSON.parse(JSON.stringify(tempData2));
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(data2));
+                isAdminMode = false;
+                alert("บันทึกช่วงวันที่เรียบร้อยแล้ว!");
+                resetFilter(false); 
+            }
+        }
 
-    function updateUI() {
-        const t = i18n[currentLang];
-        // Update Text
-        document.getElementById('navTitle').innerText = t.navTitle; document.getElementById('navSubtitle').innerText = t.navSubtitle;
-        document.getElementById('langText').innerText = t.langText; document.getElementById('langIcon').innerText = currentLang === 'th' ? 'TH' : 'EN';
-        document.getElementById('btnPrint').innerText = t.btnPrint; document.getElementById('card1Title').innerText = t.card1Title;
-        document.getElementById('unitPerson').innerText = t.unitPerson; document.getElementById('card2Title').innerText = t.card2Title;
-        document.getElementById('unitPerson2').innerText = t.unitPerson2; document.getElementById('card3Title').innerText = t.card3Title;
-        document.getElementById('unitCenter').innerText = t.unitCenter; document.getElementById('chart1Title').innerText = t.chart1Title;
-        document.getElementById('chart2Title').innerText = t.chart2Title; document.getElementById('tableTitle').innerText = t.tableTitle;
-        document.getElementById('tableSubtitle').innerText = t.tableSubtitle; document.getElementById('thCenter').innerText = t.thCenter;
-        document.getElementById('thDate').innerText = t.thDate; document.getElementById('thMale').innerText = t.thMale; document.getElementById('thFemale').innerText = t.thFemale;
-        document.getElementById('thTotal').innerText = t.thTotal; document.getElementById('footerTotal').innerText = t.footerTotal;
+        function handleLogout() {
+            const confirmation = window.confirm("คุณต้องการออกจากระบบ Admin หรือไม่?");
+            if (confirmation) {
+                isLoggedIn = false;
+                isAdminMode = false;
+                tempData2 = JSON.parse(JSON.stringify(data2)); 
+                alert("ออกจากระบบแล้ว");
+                resetFilter(false);
+            }
+        }
         
-        renderAdminControls(); 
+        /**
+         * 🔑 จัดการการคลิกแก้ไขวันที่ในตาราง (Booking-like)
+         */
+        function handleDateChange(elementId, index, isEnglish) {
+            const currentData = isAdminMode ? tempData2[index] : data2[index];
+            const dateKey = isEnglish ? currentData.dateEn : currentData.date;
+            
+            // 🔑 ใช้ฟังก์ชัน getStandardDateRange เพื่อแปลงเป็น ค.ศ. (YYYY-MM-DD to YYYY-MM-DD)
+            const standardRange = getStandardDateRange(dateKey, isEnglish);
 
-        // Update Stats
-        document.getElementById('totalSamples').innerText = globalTotalStats.sample;
-        document.getElementById('maleCount').innerText = globalTotalStats.male;
-        document.getElementById('centerCount').innerText = filteredData1.length;
-        document.getElementById('totalMaleTable').innerText = globalTotalStats.male;
-        document.getElementById('totalFemaleTable').innerText = globalTotalStats.female;
-        document.getElementById('totalSampleTable').innerText = globalTotalStats.sample;
-
-        renderTable(t);
-        renderCharts(t);
-    }
-
-    function renderTable(t) {
-        const tableBody = document.getElementById('tableBody');
-        tableBody.innerHTML = ''; 
-        
-        const currentDataSource = isAdminMode ? tempData2 : data2;
-
-        filteredData1.forEach((row, index) => {
-            let info = currentDataSource.find(d => d.province === row.center);
-            if (!info && row.center === "บ้านชายกรุณา") {
-                info = currentDataSource.find(d => d.name.includes("บ้านชายกรุณา"));
+            const inputElement = document.getElementById(elementId);
+            if (inputElement._flatpickr) {
+                inputElement._flatpickr.destroy();
             }
 
-            const displayName = currentLang === 'th' ? (info ? info.name : row.center) : (info ? info.nameEn : centerTranslations[row.center] || row.center);
-            const displayProvince = currentLang === 'th' ? (info ? info.province : '') : (info ? info.provinceEn : '');
-            const displayDate = currentLang === 'th' ? (info ? info.date : '-') : (info ? info.dateEn : '-');
-            
-            const originalIndex = data2.findIndex(d => d.province === row.center || (row.center === "บ้านชายกรุณา" && d.name.includes("บ้านชายกรุณา")));
+            const fpInstance = flatpickr(inputElement, {
+                mode: "range", 
+                dateFormat: "Y-m-d", 
+                locale: isEnglish ? 'en' : 'th', 
+                defaultDate: standardRange, // 🔑 กำหนดเป็น ค.ศ.
+                wrap: true, 
+                onClose: function(selectedDates, dateStr, instance) {
+                    if (selectedDates.length === 2) { 
+                        const start = selectedDates[0];
+                        const end = selectedDates[1];
+                        
+                        // แปลง Date Object กลับเป็นรูปแบบไทย/อังกฤษ (พ.ศ.) เพื่อบันทึกใน data2
+                        const newThaiDate = formatDateToThaiRange(start, end);
+                        const newEnglishDate = formatDateToEnglishRange(start, end);
+                        
+                        tempData2[index].date = newThaiDate;
+                        tempData2[index].dateEn = newEnglishDate;
 
-            const tr = document.createElement('tr');
-            tr.className = "hover:bg-indigo-50/40 transition-colors group cursor-default";
+                        updateUI(); 
+                    } else if (selectedDates.length === 1) {
+                         alert("กรุณาเลือกวันที่สิ้นสุดด้วย");
+                    }
+                    instance.destroy(); 
+                }
+            });
+            fpInstance.open();
+        }
+
+        // --- Filter Logic ---
+
+        function applyFilter(startFilterDate, endFilterDate) {
+            if (!startFilterDate || !endFilterDate) {
+                return resetFilter(false);
+            }
+
+            const currentDataSource = isAdminMode ? tempData2 : data2;
+
+            const filteredCentersDetails = currentDataSource.filter(detail => {
+                const dateRange = parseThaiDateRange(detail.date);
+                if (!dateRange) return false;
+
+                const overlap = dateRange.startDate <= endFilterDate && dateRange.endDate >= startFilterDate;
+                return overlap;
+            });
+
+            const matchingCenterKeys = filteredCentersDetails.map(detail => detail.province || detail.name);
+
+            filteredData1 = data1.filter(stat => {
+                const centerKey = stat.center;
+                
+                if (centerKey === "บ้านชายกรุณา") {
+                    return matchingCenterKeys.includes("สมุทรปราการ") || matchingCenterKeys.some(name => name.includes("บ้านชายกรุณา"));
+                }
+                return matchingCenterKeys.includes(centerKey);
+            });
+
+            globalTotalStats = calculateTotalStats(filteredData1);
+            updateUI();
+        }
+
+        function resetFilter(shouldClearPicker = true) {
+            filteredData1 = data1;
+            globalTotalStats = calculateTotalStats(data1);
             
-            let dateCellHTML = '';
-            if (isAdminMode) {
-                 // 🔑 โหมดแก้ไข (Booking-like picker)
-                 const dateKey = `date-input-${originalIndex}`;
-                 dateCellHTML = `
-                    <div class="relative w-full inline-block" data-toggle>
-                        <span id="date-edit-${originalIndex}" 
-                            class="inline-flex items-center px-3 py-1 rounded-md text-xs font-medium bg-indigo-100 border border-indigo-300 text-indigo-700 shadow-sm cursor-pointer hover:bg-indigo-200 transition-all w-full"
-                            onclick="handleDateChange('${dateKey}', ${originalIndex}, '${currentLang}' === 'en')"
-                            >
+            if (shouldClearPicker) {
+                const fp = document.getElementById('dateRangePicker')._flatpickr;
+                if (fp) {
+                    fp.clear();
+                }
+            }
+            updateUI();
+        }
+
+        // --- Core Render Functions ---
+
+        function updateUI() {
+            const t = i18n[currentLang];
+            // Update Text (Omitted for brevity in response, but included in final code)
+            document.getElementById('navTitle').innerText = t.navTitle; document.getElementById('navSubtitle').innerText = t.navSubtitle;
+            document.getElementById('langText').innerText = t.langText; document.getElementById('langIcon').innerText = currentLang === 'th' ? 'TH' : 'EN';
+            document.getElementById('btnPrint').innerText = t.btnPrint; document.getElementById('card1Title').innerText = t.card1Title;
+            document.getElementById('unitPerson').innerText = t.unitPerson; document.getElementById('card2Title').innerText = t.card2Title;
+            document.getElementById('unitPerson2').innerText = t.unitPerson2; document.getElementById('card3Title').innerText = t.card3Title;
+            document.getElementById('unitCenter').innerText = t.unitCenter; document.getElementById('chart1Title').innerText = t.chart1Title;
+            document.getElementById('chart2Title').innerText = t.chart2Title; document.getElementById('tableTitle').innerText = t.tableTitle;
+            document.getElementById('tableSubtitle').innerText = t.tableSubtitle; document.getElementById('thCenter').innerText = t.thCenter;
+            document.getElementById('thDate').innerText = t.thDate; document.getElementById('thMale').innerText = t.thMale; document.getElementById('thFemale').innerText = t.thFemale;
+            document.getElementById('thTotal').innerText = t.thTotal; document.getElementById('footerTotal').innerText = t.footerTotal;
+            
+            renderAdminControls(); 
+
+            // Update Stats
+            document.getElementById('totalSamples').innerText = globalTotalStats.sample;
+            document.getElementById('maleCount').innerText = globalTotalStats.male;
+            document.getElementById('centerCount').innerText = filteredData1.length;
+            document.getElementById('totalMaleTable').innerText = globalTotalStats.male;
+            document.getElementById('totalFemaleTable').innerText = globalTotalStats.female;
+            document.getElementById('totalSampleTable').innerText = globalTotalStats.sample;
+
+            renderTable(t);
+            renderCharts(t);
+        }
+
+        function renderTable(t) {
+            const tableBody = document.getElementById('tableBody');
+            tableBody.innerHTML = ''; 
+            
+            const currentDataSource = isAdminMode ? tempData2 : data2;
+
+            filteredData1.forEach((row, index) => {
+                let info = currentDataSource.find(d => d.province === row.center);
+                if (!info && row.center === "บ้านชายกรุณา") {
+                    info = currentDataSource.find(d => d.name.includes("บ้านชายกรุณา"));
+                }
+
+                const displayName = currentLang === 'th' ? (info ? info.name : row.center) : (info ? info.nameEn : centerTranslations[row.center] || row.center);
+                const displayProvince = currentLang === 'th' ? (info ? info.province : '') : (info ? info.provinceEn : '');
+                const displayDate = currentLang === 'th' ? (info ? info.date : '-') : (info ? info.dateEn : '-');
+                
+                const originalIndex = data2.findIndex(d => d.province === row.center || (row.center === "บ้านชายกรุณา" && d.name.includes("บ้านชายกรุณา")));
+
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-indigo-50/40 transition-colors group cursor-default";
+                
+                let dateCellHTML = '';
+                if (isAdminMode) {
+                     // 🔑 โหมดแก้ไข (Booking-like picker)
+                     const dateKey = `date-input-${originalIndex}`;
+                     dateCellHTML = `
+                        <div class="relative w-full inline-block" data-toggle>
+                            <span id="date-edit-${originalIndex}" 
+                                class="inline-flex items-center px-3 py-1 rounded-md text-xs font-medium bg-indigo-100 border border-indigo-300 text-indigo-700 shadow-sm cursor-pointer hover:bg-indigo-200 transition-all w-full"
+                                onclick="handleDateChange('${dateKey}', ${originalIndex}, '${currentLang}' === 'en')"
+                                >
+                                <i data-lucide="calendar" size="12" class="mr-1.5 opacity-70"></i>
+                                ${displayDate}
+                            </span>
+                            <input type="text" id="${dateKey}" style="display:none;" />
+                        </div>
+                     `;
+                } else {
+                     // โหมดอ่าน
+                     dateCellHTML = `
+                        <span class="inline-flex items-center px-3 py-1 rounded-md text-xs font-medium bg-white border border-slate-200 text-slate-600 shadow-sm group-hover:border-indigo-200 group-hover:text-indigo-600 transition-all">
                             <i data-lucide="calendar" size="12" class="mr-1.5 opacity-70"></i>
                             ${displayDate}
                         </span>
-                        <input type="text" id="${dateKey}" style="display:none;" />
-                    </div>
-                 `;
-            } else {
-                 // โหมดอ่าน
-                 dateCellHTML = `
-                    <span class="inline-flex items-center px-3 py-1 rounded-md text-xs font-medium bg-white border border-slate-200 text-slate-600 shadow-sm group-hover:border-indigo-200 group-hover:text-indigo-600 transition-all">
-                        <i data-lucide="calendar" size="12" class="mr-1.5 opacity-70"></i>
-                        ${displayDate}
-                    </span>
-                 `;
-            }
-
-
-            tr.innerHTML = `
-                <td class="px-6 py-4 text-slate-400 font-mono text-xs">${String(index + 1).padStart(2, '0')}</td>
-                <td class="px-6 py-4">
-                    <div class="font-bold text-slate-700 group-hover:text-indigo-700 transition-colors">${displayName}</div>
-                    <div class="flex items-center gap-1 text-xs text-slate-400 mt-0.5">
-                        <i data-lucide="map-pin" size="10"></i> ${displayProvince}
-                    </div>
-                </td>
-                <td class="px-6 py-4">${dateCellHTML}</td>
-                <td class="px-6 py-4 text-center">
-                    <span class="inline-block w-8 py-1 rounded bg-indigo-50 text-indigo-700 font-bold text-xs">${row.male}</span>
-                </td>
-                <td class="px-6 py-4 text-center">
-                    <span class="inline-block w-8 py-1 rounded bg-pink-50 text-pink-700 font-bold text-xs">${row.female}</span>
-                </td>
-                <td class="px-6 py-4 text-right">
-                    <span class="font-bold text-slate-800 text-base">${row.sample}</span>
-                </td>
-            `;
-            tableBody.appendChild(tr);
-        });
-        lucide.createIcons();
-        setupFlatpickr(false); 
-    }
-
-    function renderCharts(t) {
-        const totalStats = globalTotalStats; 
-
-        // --- 1. Gender Distribution (Doughnut Chart) ---
-        if (genderChartInstance) { genderChartInstance.destroy(); }
-        const genderData = { labels: [t.male, t.female], datasets: [{ data: [totalStats.male, totalStats.female], backgroundColor: ['#4F46E5', '#EC4899'], hoverBackgroundColor: ['#6366F1', '#F472B6'], borderWidth: 0, spacing: 5, }] };
-        const genderConfig = { type: 'doughnut', data: genderData, options: { responsive: true, maintainAspectRatio: false, cutout: '60%', plugins: { legend: { position: 'bottom', labels: { padding: 20, usePointStyle: true, font: { family: 'Sarabun, sans-serif' } } }, tooltip: { callbacks: { label: function(context) { let label = context.label || ''; if (label) { label += ': '; } if (context.parsed !== null) { const total = context.dataset.data.reduce((a, b) => a + b, 0); const percentage = total === 0 ? '0.0%' : ((context.parsed / total) * 100).toFixed(1) + '%'; label += context.parsed + ` (${percentage})`; } return label; } }, bodyFont: { family: 'Sarabun, sans-serif' }, titleFont: { family: 'Sarabun, sans-serif' } } }, layout: { padding: { top: 0, bottom: 10 } } } };
-        const genderCtx = document.getElementById('genderChart').getContext('2d');
-        genderChartInstance = new Chart(genderCtx, genderConfig);
-
-
-        // --- 2. Proportion by Center (Bar Chart) ---
-        if (pieChartInstance) { pieChartInstance.destroy(); }
-        const centerLabels = filteredData1.map(d => currentLang === 'th' ? d.center : centerTranslations[d.center] || d.center);
-        const centerMales = filteredData1.map(d => d.male);
-        const centerFemales = filteredData1.map(d => d.female);
-        const centerChartData = {
-            labels: centerLabels, datasets: [
-                { label: t.male, data: centerMales, backgroundColor: '#4F46E5', borderRadius: 4, },
-                { label: t.female, data: centerFemales, backgroundColor: '#EC4899', borderRadius: 4, }
-            ]
-        };
-        const centerChartConfig = { type: 'bar', data: centerChartData, options: { responsive: true, maintainAspectRatio: false, scales: { x: { stacked: true, grid: { display: false }, ticks: { font: { family: 'Sarabun, sans-serif' } } }, y: { stacked: true, beginAtZero: true, title: { display: true, text: t.thTotal, font: { family: 'Sarabun, sans-serif', weight: 'bold' } }, ticks: { font: { family: 'Sarabun, sans-serif' } } } }, plugins: { legend: { position: 'top', labels: { usePointStyle: true, padding: 20, font: { family: 'Sarabun, sans-serif' } } }, tooltip: { bodyFont: { family: 'Sarabun, sans-serif' }, titleFont: { family: 'Sarabun, sans-serif' } } } } };
-        const pieCtx = document.getElementById('centerPieChart').getContext('2d');
-        pieChartInstance = new Chart(pieCtx, centerChartConfig);
-    }
-
-    function setupFlatpickr(shouldUpdateUI = true) {
-        flatpickr("#dateRangePicker", {
-            mode: "range", dateFormat: "Y-m-d", locale: "th", 
-            onChange: function(selectedDates, dateStr, instance) {
-                if (selectedDates.length === 2) {
-                    applyFilter(selectedDates[0], selectedDates[1]);
-                } else if (selectedDates.length === 0 && dateStr === "") {
-                    resetFilter(false); 
+                     `;
                 }
-            }
+
+
+                tr.innerHTML = `
+                    <td class="px-6 py-4 text-slate-400 font-mono text-xs">${String(index + 1).padStart(2, '0')}</td>
+                    <td class="px-6 py-4">
+                        <div class="font-bold text-slate-700 group-hover:text-indigo-700 transition-colors">${displayName}</div>
+                        <div class="flex items-center gap-1 text-xs text-slate-400 mt-0.5">
+                            <i data-lucide="map-pin" size="10"></i> ${displayProvince}
+                        </div>
+                    </td>
+                    <td class="px-6 py-4">${dateCellHTML}</td>
+                    <td class="px-6 py-4 text-center">
+                        <span class="inline-block w-8 py-1 rounded bg-indigo-50 text-indigo-700 font-bold text-xs">${row.male}</span>
+                    </td>
+                    <td class="px-6 py-4 text-center">
+                        <span class="inline-block w-8 py-1 rounded bg-pink-50 text-pink-700 font-bold text-xs">${row.female}</span>
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                        <span class="font-bold text-slate-800 text-base">${row.sample}</span>
+                    </td>
+                `;
+                tableBody.appendChild(tr);
+            });
+            lucide.createIcons();
+            setupFlatpickr(false); 
+        }
+
+        function renderCharts(t) {
+            const totalStats = globalTotalStats; 
+
+            // --- 1. Gender Distribution (Doughnut Chart) ---
+            if (genderChartInstance) { genderChartInstance.destroy(); }
+            const genderData = { labels: [t.male, t.female], datasets: [{ data: [totalStats.male, totalStats.female], backgroundColor: ['#4F46E5', '#EC4899'], hoverBackgroundColor: ['#6366F1', '#F472B6'], borderWidth: 0, spacing: 5, }] };
+            const genderConfig = { type: 'doughnut', data: genderData, options: { responsive: true, maintainAspectRatio: false, cutout: '60%', plugins: { legend: { position: 'bottom', labels: { padding: 20, usePointStyle: true, font: { family: 'Sarabun, sans-serif' } } }, tooltip: { callbacks: { label: function(context) { let label = context.label || ''; if (label) { label += ': '; } if (context.parsed !== null) { const total = context.dataset.data.reduce((a, b) => a + b, 0); const percentage = total === 0 ? '0.0%' : ((context.parsed / total) * 100).toFixed(1) + '%'; label += context.parsed + ` (${percentage})`; } return label; } }, bodyFont: { family: 'Sarabun, sans-serif' }, titleFont: { family: 'Sarabun, sans-serif' } } }, layout: { padding: { top: 0, bottom: 10 } } } };
+            const genderCtx = document.getElementById('genderChart').getContext('2d');
+            genderChartInstance = new Chart(genderCtx, genderConfig);
+
+
+            // --- 2. Proportion by Center (Bar Chart) ---
+            if (pieChartInstance) { pieChartInstance.destroy(); }
+            const centerLabels = filteredData1.map(d => currentLang === 'th' ? d.center : centerTranslations[d.center] || d.center);
+            const centerMales = filteredData1.map(d => d.male);
+            const centerFemales = filteredData1.map(d => d.female);
+            const centerChartData = {
+                labels: centerLabels, datasets: [
+                    { label: t.male, data: centerMales, backgroundColor: '#4F46E5', borderRadius: 4, },
+                    { label: t.female, data: centerFemales, backgroundColor: '#EC4899', borderRadius: 4, }
+                ]
+            };
+            const centerChartConfig = { type: 'bar', data: centerChartData, options: { responsive: true, maintainAspectRatio: false, scales: { x: { stacked: true, grid: { display: false }, ticks: { font: { family: 'Sarabun, sans-serif' } } }, y: { stacked: true, beginAtZero: true, title: { display: true, text: t.thTotal, font: { family: 'Sarabun, sans-serif', weight: 'bold' } }, ticks: { font: { family: 'Sarabun, sans-serif' } } } }, plugins: { legend: { position: 'top', labels: { usePointStyle: true, padding: 20, font: { family: 'Sarabun, sans-serif' } } }, tooltip: { bodyFont: { family: 'Sarabun, sans-serif' }, titleFont: { family: 'Sarabun, sans-serif' } } } } };
+            const pieCtx = document.getElementById('centerPieChart').getContext('2d');
+            pieChartInstance = new Chart(pieCtx, centerChartConfig);
+        }
+
+        function setupFlatpickr(shouldUpdateUI = true) {
+            flatpickr("#dateRangePicker", {
+                mode: "range", dateFormat: "Y-m-d", locale: "th", 
+                onChange: function(selectedDates, dateStr, instance) {
+                    if (selectedDates.length === 2) {
+                        applyFilter(selectedDates[0], selectedDates[1]);
+                    } else if (selectedDates.length === 0 && dateStr === "") {
+                        resetFilter(false); 
+                    }
+                }
+            });
+        }
+        
+        // --- Initialization ---
+        document.addEventListener('DOMContentLoaded', () => {
+            loadData(); 
+            lucide.createIcons();
+            updateUI();
         });
-    }
-    
-    // --- Initialization ---
-    document.addEventListener('DOMContentLoaded', () => {
-        loadData(); 
-        lucide.createIcons();
-        updateUI();
-    });
-</script>
+    </script>
 </body>
 </html>
