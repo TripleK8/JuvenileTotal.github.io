@@ -202,11 +202,10 @@
                         <tr>
                             <th class="px-6 py-4 rounded-tl-lg">#</th>
                             <th id="thCenter" class="px-6 py-4">ศูนย์ฝึกและอบรมฯ</th>
-                            <th id="thDate" class="px-6 py-4">ช่วงเวลาดำเนินการ</th>
-                            <th id="thMale" class="px-6 py-4 text-center">ชาย</th>
+                            <th id="thDate" class="px-6 py-4">ปฏิทินดำเนินการ</th> <th id="thMale" class="px-6 py-4 text-center">ชาย</th>
                             <th id="thFemale" class="px-6 py-4 text-center">หญิง</th>
-                            <th id="thTotal" class="px-6 py-4 text-right rounded-tr-lg">รวม (คน)</th>
-                        </tr>
+                            <th id="thTotal" class="px-6 py-4 text-center">รวม (คน)</th>
+                            <th id="thNote" class="px-6 py-4 rounded-tr-lg">หมายเหตุ</th> </tr>
                     </thead>
                     <tbody id="tableBody" class="divide-y divide-gray-100">
                         </tbody>
@@ -215,8 +214,8 @@
                             <td id="footerTotal" colspan="3" class="px-6 py-5 text-right text-slate-500">รวมทั้งหมด</td>
                             <td id="totalMaleTable" class="px-6 py-5 text-center text-indigo-600">0</td>
                             <td id="totalFemaleTable" class="px-6 py-5 text-center text-pink-600">0</td>
-                            <td id="totalSampleTable" class="px-6 py-5 text-right text-lg">0</td>
-                        </tr>
+                            <td id="totalSampleTable" class="px-6 py-5 text-center text-lg">0</td>
+                            <td class="px-6 py-5"></td> </tr>
                     </tfoot>
                 </table>
             </div>
@@ -241,16 +240,16 @@
                  card1Title: "กลุ่มตัวอย่างทั้งหมด", unitPerson: "คน", unitPerson2: "คน", unitCenter: "แห่ง",
                  card2Title: "สัดส่วนเพศชาย", card3Title: "ศูนย์ฝึกฯ ที่เข้าร่วม", chart1Title: "การกระจายตัวของเพศ",
                  chart2Title: "สัดส่วนตามศูนย์ฝึกฯ", tableTitle: "ตารางกำหนดการลงพื้นที่", tableSubtitle: "รายละเอียดจำนวนกลุ่มตัวอย่างและช่วงเวลาดำเนินการ",
-                 thCenter: "ศูนย์ฝึกและอบรมฯ", thDate: "ช่วงเวลาดำเนินการ", thMale: "ชาย", thFemale: "หญิง",
-                 thTotal: "รวม (คน)", footerTotal: "รวมทั้งหมด", male: "ชาย", female: "หญิง"
+                 thCenter: "ศูนย์ฝึกและอบรมฯ", thDate: "ปฏิทินดำเนินการ", thMale: "ชาย", thFemale: "หญิง",
+                 thTotal: "รวม (คน)", footerTotal: "รวมทั้งหมด", male: "ชาย", female: "หญิง", thNote: "หมายเหตุ" // เพิ่มคำแปล
              },
              en: {
                  navTitle: "Sampling Dashboard", navSubtitle: "Research Status & Field Visit Tracking", langText: "ภาษาไทย", btnPrint: "Print Report",
                  card1Title: "Total Samples", unitPerson: "Persons", unitPerson2: "Persons", unitCenter: "Centers",
                  card2Title: "Male Ratio", card3Title: "Participating Centers", chart1Title: "Gender Distribution",
                  chart2Title: "Proportion by Center", tableTitle: "Field Visit Schedule", tableSubtitle: "Sample size details and operation periods",
-                 thCenter: "Training Center", thDate: "Operation Period", thMale: "Male", thFemale: "Female",
-                 thTotal: "Total", footerTotal: "Grand Total", male: "Male", female: "Female"
+                 thCenter: "Training Center", thDate: "Calendar", thMale: "Male", thFemale: "Female",
+                 thTotal: "Total", footerTotal: "Grand Total", male: "Male", female: "Female", thNote: "Original Period" // เพิ่มคำแปล
              }
         };
 
@@ -265,13 +264,14 @@
             { center: "สุราษฎร์ธานี", sample: 66, male: 60, female: 6 }, { center: "อุบลราชธานี", sample: 140, male: 131, female: 9 },
         ];
 
+        // 🔑 เพิ่ม Note/Original Date เข้าไปใน data2
         const initialData2 = [
-            { id: 1, name: "ศูนย์ฝึกและอบรมเด็กและเยาวชนระยอง", nameEn: "Juvenile Training Center Rayong", province: "ระยอง", provinceEn: "Rayong", date: "17 – 22 พ.ย. 68", dateEn: "17 – 22 Nov 25" },
-            { id: 2, name: "ศูนย์ฝึกและอบรมเด็กและเยาวชนราชบุรี", nameEn: "Juvenile Training Center Ratchaburi", province: "ราชบุรี", provinceEn: "Ratchaburi", date: "15 – 20 ธ.ค. 68", dateEn: "15 – 20 Dec 25" },
-            { id: 3, name: "ศูนย์ฝึกและอบรมเด็กและเยาวชนบ้านชายกรุณา", nameEn: "Ban Chai Karuna Training Center", province: "สมุทรปราการ", provinceEn: "Samut Prakan", date: "8 – 13 ธ.ค. 68", dateEn: "8 – 13 Dec 25" },
-            { id: 4, name: "ศูนย์ฝึกและอบรมเด็กและเยาวชนเชียงใหม่", nameEn: "Juvenile Training Center Chiang Mai", province: "เชียงใหม่", provinceEn: "Chiang Mai", date: "5 – 10 ม.ค. 69", dateEn: "5 – 10 Jan 26" },
-            { id: 5, name: "ศูนย์ฝึกและอบรมเด็กและเยาวชนสุราษฎร์ธานี", nameEn: "Juvenile Training Center Surat Thani", province: "สุราษฎร์ธานี", provinceEn: "Surat Thani", date: "19 – 24 ม.ค. 69", dateEn: "19 – 24 Jan 26" },
-            { id: 6, name: "ศูนย์ฝึกและอบรมเด็กและเยาวชนอุบลราชธานี", nameEn: "Juvenile Training Center Ubon Ratchathani", province: "อุบลราชธานี", provinceEn: "Ubon Ratchathani", date: "2 – 7, 9 – 14 ก.พ. 69", dateEn: "2 – 7, 9 – 14 Feb 26" },
+            { id: 1, name: "ศูนย์ฝึกและอบรมเด็กและเยาวชนระยอง", nameEn: "Juvenile Training Center Rayong", province: "ระยอง", provinceEn: "Rayong", date: "2025-11-17 to 2025-11-22", dateEn: "2025-11-17 to 2025-11-22", note: "17 – 22 พ.ย. 68", noteEn: "17 – 22 Nov 25" },
+            { id: 2, name: "ศูนย์ฝึกและอบรมเด็กและเยาวชนราชบุรี", nameEn: "Juvenile Training Center Ratchaburi", province: "ราชบุรี", provinceEn: "Ratchaburi", date: "2025-12-15 to 2025-12-20", dateEn: "2025-12-15 to 2025-12-20", note: "15 – 20 ธ.ค. 68", noteEn: "15 – 20 Dec 25" },
+            { id: 3, name: "ศูนย์ฝึกและอบรมเด็กและเยาวชนบ้านชายกรุณา", nameEn: "Ban Chai Karuna Training Center", province: "สมุทรปราการ", provinceEn: "Samut Prakan", date: "2025-12-08 to 2025-12-13", dateEn: "2025-12-08 to 2025-12-13", note: "8 – 13 ธ.ค. 68", noteEn: "8 – 13 Dec 25" },
+            { id: 4, name: "ศูนย์ฝึกและอบรมเด็กและเยาวชนเชียงใหม่", nameEn: "Juvenile Training Center Chiang Mai", province: "เชียงใหม่", provinceEn: "Chiang Mai", date: "2026-01-05 to 2026-01-10", dateEn: "2026-01-05 to 2026-01-10", note: "5 – 10 ม.ค. 69", noteEn: "5 – 10 Jan 26" },
+            { id: 5, name: "ศูนย์ฝึกและอบรมเด็กและเยาวชนสุราษฎร์ธานี", nameEn: "Juvenile Training Center Surat Thani", province: "สุราษฎร์ธานี", provinceEn: "Surat Thani", date: "2026-01-19 to 2026-01-24", dateEn: "2026-01-19 to 2026-01-24", note: "19 – 24 ม.ค. 69", noteEn: "19 – 24 Jan 26" },
+            { id: 6, name: "ศูนย์ฝึกและอบรมเด็กและเยาวชนอุบลราชธานี", nameEn: "Juvenile Training Center Ubon Ratchathani", province: "อุบลราชธานี", provinceEn: "Ubon Ratchathani", date: "2026-02-02 to 2026-02-14", dateEn: "2026-02-02 to 2026-02-14", note: "2 – 7, 9 – 14 ก.พ. 69", noteEn: "2 – 7, 9 – 14 Feb 26" },
         ];
         
         let data2 = []; 
@@ -289,6 +289,7 @@
             if (savedData) {
                 data2 = JSON.parse(savedData);
             } else {
+                // 🔑 บันทึก initialData2 ที่มี Date ในรูปแบบ YYYY-MM-DD to YYYY-MM-DD
                 data2 = initialData2;
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(data2));
             }
@@ -300,14 +301,19 @@
         // --- Date Parsing and Utilities ---
         
         /**
-         * แปลงช่วงวันที่ไทย/อังกฤษ เป็น String ในรูปแบบ YYYY-MM-DD/YYYY-MM-DD
-         * เพื่อให้ Flatpickr เข้าใจใน defaultDate
-         * 🔑 แก้ไข: ให้ฟังก์ชันนี้รับผิดชอบในการแปลง Phutthasak (พ.ศ.) เป็น Christian Era (ค.ศ.)
+         * แปลงช่วงวันที่ไทย/อังกฤษ เป็น String ในรูปแบบ YYYY-MM-DD/YYYY-MM-DD (สำหรับ Flatpickr)
+         * ฟังก์ชันนี้จะใช้แปลง Note (ช่วงเวลาเดิม) เป็นรูปแบบมาตรฐานสำหรับ filter และ defaultDate
          */
         function getStandardDateRange(dateRangeStr, isEnglish) {
             if (!dateRangeStr) return '';
             
             // ใช้ Regex ที่ยืดหยุ่นขึ้นเพื่อรองรับช่วงวันเดียวและช่วงที่มีหลายช่วง (เลือกเฉพาะช่วงแรก)
+            // 🔑 ถ้าข้อมูล dateRangeStr มาจาก data2 โดยตรง จะอยู่ในรูปแบบ YYYY-MM-DD to YYYY-MM-DD อยู่แล้ว
+            if (dateRangeStr.includes(' to ') && dateRangeStr.match(/\d{4}-\d{2}-\d{2}/)) {
+                 return dateRangeStr;
+            }
+
+            // ถ้าข้อมูลมาจาก Note (รูปแบบไทย/อังกฤษ แบบสั้น)
             const firstRangeMatch = dateRangeStr.match(/(\d+)\s*(–|-)?\s*(\d+)?\s*([ก-ฮ]+\.)\s*(\d+)/) || 
                                     dateRangeStr.match(/(\d+)\s*(–|-)?\s*(\d+)?\s*(\w+)\s*(\d+)/);
 
@@ -328,33 +334,22 @@
 
             let year = parseInt(yearStr, 10);
             
-            // 🔑 การแปลงปี พ.ศ. เป็น ค.ศ.
+            // การแปลงปี พ.ศ. เป็น ค.ศ.
             if (!isEnglish) {
-                if (year < 100) { // เป็นรูปแบบ yy เช่น 68, 69
-                    year += 2000;
-                }
-                if (year > 2400) { // เป็น พ.ศ. 2568, 2569
-                    year -= 543;
-                }
+                if (year < 100) { year += 2000; }
+                if (year > 2400) { year -= 543; }
             } else {
-                 // ถ้าเป็นภาษาอังกฤษ (en) และปีเป็นเลข 2 หลัก (25, 26) ให้แปลงเป็น 2025, 2026
-                 if (year < 100) {
-                     year += 2000;
-                 }
+                 if (year < 100) { year += 2000; }
             }
             
             let startDay = parseInt(day1, 10);
             let endDay = parseInt(day2 || day1, 10);
             if (!day2 || !dash) { endDay = startDay; } 
             
-            // สร้าง Date Object ที่ถูกต้อง
             const startDate = new Date(year, month, startDay);
             const endDate = new Date(year, month, endDay);
-            // เพื่อให้ endDate ครอบคลุมถึงสิ้นวันนั้น
             endDate.setHours(23, 59, 59, 999); 
 
-
-            // format to YYYY-MM-DD
             const startStr = startDate.toISOString().split('T')[0];
             const endStr = endDate.toISOString().split('T')[0];
             
@@ -363,12 +358,11 @@
 
 
         function parseThaiDateRange(dateRangeStr) {
-            // Re-use logic from getStandardDateRange to simplify date parsing and conversion
-            const standardRange = getStandardDateRange(dateRangeStr, false); // Get standard range using Thai format parsing
-            if (!standardRange) return null;
+            // dateRangeStr ใน data2 ถูกเก็บเป็น YYYY-MM-DD to YYYY-MM-DD
+            const [startStr, , endStr] = dateRangeStr.split(' ');
             
-            const [startStr, , endStr] = standardRange.split(' ');
-            
+            if (!startStr || !endStr) return null;
+
             const startDate = new Date(startStr);
             const endDate = new Date(endStr + 'T23:59:59'); // Set time to end of day
 
@@ -382,30 +376,26 @@
                 female: acc.female + curr.female
             }), { sample: 0, male: 0, female: 0 });
         }
-
+        
+        // 🔑 ฟังก์ชันนี้สำหรับแปลง Date Object ที่ได้จากปฏิทิน (ค.ศ.) กลับเป็นรูปแบบไทย/อังกฤษ (พ.ศ.)
         function formatDateToThaiRange(start, end) {
             const thMonthNames = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
             const startDay = start.getDate();
             const endDay = end.getDate();
-            // 🔑 แปลงปี ค.ศ. ให้เป็น พ.ศ. (ใช้เลข 2 ตัวท้าย)
             const thYear = (start.getFullYear() + 543) % 100; 
             
-            // กรณีเป็นวันเดียว
             if (start.toDateString() === end.toDateString()) {
                  return `${startDay} ${thMonthNames[start.getMonth()]} ${String(thYear).padStart(2, '0')}`;
             }
 
-            // กรณีช่วงเดียวกันในเดือนและปีเดียวกัน
             if (start.getMonth() === end.getMonth() && start.getFullYear() === end.getFullYear()) {
                 return `${startDay} – ${endDay} ${thMonthNames[start.getMonth()]} ${String(thYear).padStart(2, '0')}`;
             }
             
-            // กรณีข้ามเดือน (แต่ปีเดียวกัน)
             if (start.getFullYear() === end.getFullYear()) {
                  return `${startDay} ${thMonthNames[start.getMonth()]} – ${endDay} ${thMonthNames[end.getMonth()]} ${String(thYear).padStart(2, '0')}`;
             }
 
-            // กรณีข้ามปี (ไม่น่าจะเกิดในการตั้งเวลา แต่เขียนไว้เพื่อความสมบูรณ์)
             return `${startDay} ${thMonthNames[start.getMonth()]} ${String((start.getFullYear() + 543) % 100).padStart(2, '0')} – ${endDay} ${thMonthNames[end.getMonth()]} ${String((end.getFullYear() + 543) % 100).padStart(2, '0')}`;
         }
 
@@ -413,7 +403,6 @@
             const enMonthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
             const startDay = start.getDate();
             const endDay = end.getDate();
-            // ใช้ปี ค.ศ. 2 หลัก
             const enYear = (start.getFullYear() % 100).toString().padStart(2, '0');
             const startMonthStr = enMonthNames[start.getMonth()];
             const endMonthStr = enMonthNames[end.getMonth()];
@@ -527,10 +516,8 @@
          */
         function handleDateChange(elementId, index, isEnglish) {
             const currentData = isAdminMode ? tempData2[index] : data2[index];
-            const dateKey = isEnglish ? currentData.dateEn : currentData.date;
-            
-            // 🔑 ใช้ฟังก์ชัน getStandardDateRange เพื่อแปลงเป็น ค.ศ. (YYYY-MM-DD to YYYY-MM-DD)
-            const standardRange = getStandardDateRange(dateKey, isEnglish);
+            // ดึงวันที่ที่ต้องการแก้ไข ซึ่งเก็บในรูปแบบมาตรฐาน YYYY-MM-DD to YYYY-MM-DD
+            const standardRange = currentData.date; 
 
             const inputElement = document.getElementById(elementId);
             if (inputElement._flatpickr) {
@@ -541,19 +528,27 @@
                 mode: "range", 
                 dateFormat: "Y-m-d", 
                 locale: isEnglish ? 'en' : 'th', 
-                defaultDate: standardRange ? standardRange.split(' to ') : [], // 🔑 กำหนดเป็น ค.ศ.
+                // ใช้ standardRange ที่ถูกจัดเก็บไว้แล้วเป็น defaultDate
+                defaultDate: standardRange ? standardRange.split(' to ') : [], 
                 wrap: true, 
                 onClose: function(selectedDates, dateStr, instance) {
                     if (selectedDates.length === 2) { 
                         const start = selectedDates[0];
                         const end = selectedDates[1];
                         
-                        // แปลง Date Object กลับเป็นรูปแบบไทย/อังกฤษ (พ.ศ.) เพื่อบันทึกใน data2
-                        const newThaiDate = formatDateToThaiRange(start, end);
-                        const newEnglishDate = formatDateToEnglishRange(start, end);
+                        // 1. แปลง Date Object กลับเป็นรูปแบบไทย/อังกฤษ (พ.ศ.) เพื่อใช้เป็น Note
+                        const newThaiNote = formatDateToThaiRange(start, end);
+                        const newEnglishNote = formatDateToEnglishRange(start, end);
                         
-                        tempData2[index].date = newThaiDate;
-                        tempData2[index].dateEn = newEnglishDate;
+                        // 2. แปลง Date Object เป็นรูปแบบมาตรฐาน YYYY-MM-DD to YYYY-MM-DD เพื่อใช้เป็น Date หลักสำหรับการ Filter
+                        const newStandardDate = `${start.toISOString().split('T')[0]} to ${end.toISOString().split('T')[0]}`;
+
+
+                        // บันทึกการเปลี่ยนแปลงใน tempData2
+                        tempData2[index].note = newThaiNote;
+                        tempData2[index].noteEn = newEnglishNote;
+                        tempData2[index].date = newStandardDate; // 🔑 อัปเดต Date ที่ใช้ในการ Filter/Picker
+                        tempData2[index].dateEn = newStandardDate;
 
                         updateUI(); 
                     } else if (selectedDates.length === 1) {
@@ -575,6 +570,7 @@
             const currentDataSource = isAdminMode ? tempData2 : data2;
 
             const filteredCentersDetails = currentDataSource.filter(detail => {
+                // 🔑 ใช้ detail.date (รูปแบบ YYYY-MM-DD to YYYY-MM-DD) ในการ filter
                 const dateRange = parseThaiDateRange(detail.date);
                 if (!dateRange) return false;
 
@@ -630,6 +626,7 @@
             document.getElementById('tableSubtitle').innerText = t.tableSubtitle; document.getElementById('thCenter').innerText = t.thCenter;
             document.getElementById('thDate').innerText = t.thDate; document.getElementById('thMale').innerText = t.thMale; document.getElementById('thFemale').innerText = t.thFemale;
             document.getElementById('thTotal').innerText = t.thTotal; document.getElementById('footerTotal').innerText = t.footerTotal;
+            document.getElementById('thNote').innerText = t.thNote; // อัปเดตข้อความหัวตารางใหม่
             
             renderAdminControls(); 
 
@@ -659,11 +656,18 @@
                 }
                 
                 // ค้นหา index เดิมใน data2 เพื่อใช้ใน tempData2 ในการแก้ไข
-                const originalIndex = data2.findIndex(d => d.province === row.center || (row.center === "บ้านชายกรุณา" && d.name.includes("บ้านชายกรุณา")));
+                const originalIndex = data2.findIndex(d => d.province === row.center || (row.center === "บ้านชายกรุณา" && d.name.includes("บ้านชายกรุณa")));
 
                 const displayName = currentLang === 'th' ? (info ? info.name : row.center) : (info ? info.nameEn : centerTranslations[row.center] || row.center);
                 const displayProvince = currentLang === 'th' ? (info ? info.province : '') : (info ? info.provinceEn : '');
-                const displayDate = currentLang === 'th' ? (info ? info.date : '-') : (info ? info.dateEn : '-');
+                
+                // 🔑 ดึงวันที่เดิมจาก Note (ข้อความเดิม)
+                const displayNote = currentLang === 'th' ? (info ? info.note : '-') : (info ? info.noteEn : '-');
+                
+                // 🔑 ดึงวันที่ปัจจุบันที่ถูกเลือกไว้ในปฏิทิน (Date Picker)
+                const currentDateValue = currentLang === 'th' ? 
+                    (info ? formatDateToThaiRange(...info.date.split(' to ').map(d => new Date(d))) : '-') : 
+                    (info ? formatDateToEnglishRange(...info.date.split(' to ').map(d => new Date(d))) : '-');
                 
 
                 const tr = document.createElement('tr');
@@ -671,26 +675,26 @@
                 
                 let dateCellHTML = '';
                 if (isAdminMode) {
-                     // 🔑 โหมดแก้ไข (Booking-like picker)
+                     // 🔑 โหมดแก้ไข: แสดงปุ่มปฏิทินที่เรียก handleDateChange
                      const dateKey = `date-input-${originalIndex}`;
                      dateCellHTML = `
                          <div class="relative w-full inline-block" data-toggle>
                              <span id="date-edit-${originalIndex}" 
-                                 class="inline-flex items-center px-3 py-1 rounded-md text-xs font-medium bg-indigo-100 border border-indigo-300 text-indigo-700 shadow-sm cursor-pointer hover:bg-indigo-200 transition-all w-full"
+                                 class="inline-flex items-center px-3 py-1 rounded-md text-xs font-medium bg-indigo-100 border border-indigo-300 text-indigo-700 shadow-sm cursor-pointer hover:bg-indigo-200 transition-all w-full min-w-[120px] justify-center"
                                  onclick="handleDateChange('${dateKey}', ${originalIndex}, '${currentLang}' === 'en')"
                                  >
                                  <i data-lucide="calendar" size="12" class="mr-1.5 opacity-70"></i>
-                                 ${displayDate}
+                                 ${currentDateValue}
                              </span>
                              <input type="text" id="${dateKey}" style="display:none;" />
                          </div>
                      `;
                 } else {
-                     // โหมดอ่าน
+                     // โหมดอ่าน: แสดงวันที่ปัจจุบันที่ถูกเลือกไว้
                      dateCellHTML = `
                          <span class="inline-flex items-center px-3 py-1 rounded-md text-xs font-medium bg-white border border-slate-200 text-slate-600 shadow-sm group-hover:border-indigo-200 group-hover:text-indigo-600 transition-all">
                              <i data-lucide="calendar" size="12" class="mr-1.5 opacity-70"></i>
-                             ${displayDate}
+                             ${currentDateValue}
                          </span>
                      `;
                 }
@@ -711,10 +715,10 @@
                     <td class="px-6 py-4 text-center">
                         <span class="inline-block w-8 py-1 rounded bg-pink-50 text-pink-700 font-bold text-xs">${row.female}</span>
                     </td>
-                    <td class="px-6 py-4 text-right">
+                    <td class="px-6 py-4 text-center">
                         <span class="font-bold text-slate-800 text-base">${row.sample}</span>
                     </td>
-                `;
+                    <td class="px-6 py-4 text-xs text-slate-500">${displayNote}</td> `;
                 tableBody.appendChild(tr);
             });
             lucide.createIcons();
