@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard ข้อมูลกลุ่มตัวอย่าง (Admin Edit Date)</title>
+    <title>Dashboard ข้อมูลกลุ่มตัวอย่าง (Admin Editable)</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -58,6 +58,7 @@
             font-family: 'Sarabun', sans-serif !important;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
             border-radius: 0.75rem;
+            z-index: 1000; /* ให้ปฏิทินอยู่ด้านบนสุด */
         }
         .flatpickr-day.selected, .flatpickr-day.startRange, .flatpickr-day.endRange, .flatpickr-day.selected.inRange, .flatpickr-day.startRange.inRange, .flatpickr-day.endRange.inRange {
             background: #4F46E5 !important;
@@ -224,85 +225,46 @@
     </main>
 
     <script>
-        // รหัสผ่านสำหรับ Admin (เปลี่ยนรหัสนี้ในโลกจริง!)
-        const ADMIN_PASSWORD = "adminkeng";
-        const STORAGE_KEY = 'dashboardDates'; // Key สำหรับ localStorage
+        // รหัสผ่านสำหรับ Admin
+        const ADMIN_PASSWORD = "admin456"; 
+        const STORAGE_KEY = 'dashboardDates'; 
 
         // Global States
         let currentLang = 'th';
         let isLoggedIn = false;
         let isAdminMode = false;
 
-        // Translation Data (เหมือนเดิม)
+        // Translation Data (i18n)
         const i18n = {
-             // ... (i18n data) ...
              th: {
-                navTitle: "Dashboard กลุ่มตัวอย่าง",
-                navSubtitle: "ติดตามสถานะการวิจัยและลงพื้นที่",
-                langText: "English",
-                btnPrint: "พิมพ์รายงาน",
-                card1Title: "กลุ่มตัวอย่างทั้งหมด",
-                unitPerson: "คน",
-                unitPerson2: "คน",
-                unitCenter: "แห่ง",
-                card2Title: "สัดส่วนเพศชาย",
-                card3Title: "ศูนย์ฝึกฯ ที่เข้าร่วม",
-                chart1Title: "การกระจายตัวของเพศ",
-                chart2Title: "สัดส่วนตามศูนย์ฝึกฯ",
-                tableTitle: "ตารางกำหนดการลงพื้นที่",
-                tableSubtitle: "รายละเอียดจำนวนกลุ่มตัวอย่างและช่วงเวลาดำเนินการ",
-                thCenter: "ศูนย์ฝึกและอบรมฯ",
-                thDate: "ช่วงเวลาดำเนินการ",
-                thMale: "ชาย",
-                thFemale: "หญิง",
-                thTotal: "รวม (คน)",
-                footerTotal: "รวมทั้งหมด",
-                male: "ชาย",
-                female: "หญิง"
+                navTitle: "Dashboard กลุ่มตัวอย่าง", navSubtitle: "ติดตามสถานะการวิจัยและลงพื้นที่", langText: "English", btnPrint: "พิมพ์รายงาน",
+                card1Title: "กลุ่มตัวอย่างทั้งหมด", unitPerson: "คน", unitPerson2: "คน", unitCenter: "แห่ง",
+                card2Title: "สัดส่วนเพศชาย", card3Title: "ศูนย์ฝึกฯ ที่เข้าร่วม", chart1Title: "การกระจายตัวของเพศ",
+                chart2Title: "สัดส่วนตามศูนย์ฝึกฯ", tableTitle: "ตารางกำหนดการลงพื้นที่", tableSubtitle: "รายละเอียดจำนวนกลุ่มตัวอย่างและช่วงเวลาดำเนินการ",
+                thCenter: "ศูนย์ฝึกและอบรมฯ", thDate: "ช่วงเวลาดำเนินการ", thMale: "ชาย", thFemale: "หญิง",
+                thTotal: "รวม (คน)", footerTotal: "รวมทั้งหมด", male: "ชาย", female: "หญิง"
             },
             en: {
-                navTitle: "Sampling Dashboard",
-                navSubtitle: "Research Status & Field Visit Tracking",
-                langText: "ภาษาไทย",
-                btnPrint: "Print Report",
-                card1Title: "Total Samples",
-                unitPerson: "Persons",
-                unitPerson2: "Persons",
-                unitCenter: "Centers",
-                card2Title: "Male Ratio",
-                card3Title: "Participating Centers",
-                chart1Title: "Gender Distribution",
-                chart2Title: "Proportion by Center",
-                tableTitle: "Field Visit Schedule",
-                tableSubtitle: "Sample size details and operation periods",
-                thCenter: "Training Center",
-                thDate: "Operation Period",
-                thMale: "Male",
-                thFemale: "Female",
-                thTotal: "Total",
-                footerTotal: "Grand Total",
-                male: "Male",
-                female: "Female"
+                navTitle: "Sampling Dashboard", navSubtitle: "Research Status & Field Visit Tracking", langText: "ภาษาไทย", btnPrint: "Print Report",
+                card1Title: "Total Samples", unitPerson: "Persons", unitPerson2: "Persons", unitCenter: "Centers",
+                card2Title: "Male Ratio", card3Title: "Participating Centers", chart1Title: "Gender Distribution",
+                chart2Title: "Proportion by Center", tableTitle: "Field Visit Schedule", tableSubtitle: "Sample size details and operation periods",
+                thCenter: "Training Center", thDate: "Operation Period", thMale: "Male", thFemale: "Female",
+                thTotal: "Total", footerTotal: "Grand Total", male: "Male", female: "Female"
             }
         };
 
-        // Center Name Mappings (Key to English)
         const centerTranslations = {
             "ระยอง": "Rayong", "ราชบุรี": "Ratchaburi", "บ้านชายกรุณา": "Ban Chai Karuna", 
             "เชียงใหม่": "Chiang Mai", "สุราษฎร์ธานี": "Surat Thani", "อุบลราชธานี": "Ubon Ratchathani"
         };
 
-        // ข้อมูลหลัก (Stats) - ใช้ Keys ภาษาไทยเป็นหลักในการ Map
         const data1 = [
-            { center: "ระยอง", sample: 18, male: 14, female: 4 },
-            { center: "บ้านชายกรุณา", sample: 47, male: 47, female: 0 },
-            { center: "ราชบุรี", sample: 41, male: 40, female: 1 },
-            { center: "เชียงใหม่", sample: 60, male: 56, female: 4 },
-            { center: "สุราษฎร์ธานี", sample: 66, male: 60, female: 6 },
-            { center: "อุบลราชธานี", sample: 140, male: 131, female: 9 },
+            { center: "ระยอง", sample: 18, male: 14, female: 4 }, { center: "บ้านชายกรุณา", sample: 47, male: 47, female: 0 }, 
+            { center: "ราชบุรี", sample: 41, male: 40, female: 1 }, { center: "เชียงใหม่", sample: 60, male: 56, female: 4 }, 
+            { center: "สุราษฎร์ธานี", sample: 66, male: 60, female: 6 }, { center: "อุบลราชธานี", sample: 140, male: 131, female: 9 },
         ];
 
-        // ข้อมูลรายละเอียด + วันที่ (ใช้สำหรับแสดงผลและอ้างอิง)
         const initialData2 = [
             { id: 1, name: "ศูนย์ฝึกและอบรมเด็กและเยาวชนระยอง", nameEn: "Juvenile Training Center Rayong", province: "ระยอง", provinceEn: "Rayong", date: "17 – 22 พ.ย. 68", dateEn: "17 – 22 Nov 25" },
             { id: 2, name: "ศูนย์ฝึกและอบรมเด็กและเยาวชนราชบุรี", nameEn: "Juvenile Training Center Ratchaburi", province: "ราชบุรี", provinceEn: "Ratchaburi", date: "15 – 20 ธ.ค. 68", dateEn: "15 – 20 Dec 25" },
@@ -312,15 +274,12 @@
             { id: 6, name: "ศูนย์ฝึกและอบรมเด็กและเยาวชนอุบลราชธานี", nameEn: "Juvenile Training Center Ubon Ratchathani", province: "อุบลราชธานี", provinceEn: "Ubon Ratchathani", date: "2 – 7, 9 – 14 ก.พ. 69", dateEn: "2 – 7, 9 – 14 Feb 26" },
         ];
         
-        // 🔑 ข้อมูลที่ใช้งานจริง (Admin Editable)
+        // 🔑 Global Data/State for filtering and editing
         let data2 = []; 
-        let tempData2 = []; // สำหรับโหมดแก้ไขชั่วคราว
-
-        // Global Filter State
+        let tempData2 = []; 
         let filteredData1 = data1;
         let globalTotalStats = {}; 
 
-        // Chart Instances
         let genderChartInstance = null;
         let pieChartInstance = null;
 
@@ -334,20 +293,15 @@
                 data2 = initialData2;
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(data2));
             }
-            tempData2 = JSON.parse(JSON.stringify(data2)); // Copy for temporary edits
+            tempData2 = JSON.parse(JSON.stringify(data2)); 
             globalTotalStats = calculateTotalStats(data1);
-            filteredData1 = data1; // Start with all data
+            filteredData1 = data1; 
         }
 
-        // --- Helper Functions ---
+        // --- Date Parsing and Utilities ---
 
-        /**
-         * แปลงช่วงวันที่ไทย (DD – DD MMM YY) ให้เป็น Date Object
-         * ใช้สำหรับเปรียบเทียบช่วงเวลาในการกรอง/การจัดการ
-         */
         function parseThaiDateRange(dateRangeStr) {
             if (!dateRangeStr) { return null; }
-
             const firstRange = dateRangeStr.split(',')[0].trim();
             const dateRegex = /(\d+)\s*(–|-)?\s*(\d+)?\s*([ก-ฮ]+\.)\s*(\d+)/;
             const match = firstRange.match(dateRegex);
@@ -362,7 +316,6 @@
             const month = monthMap[monthStr];
             let year = parseInt(yearStr, 10);
             
-            // แปลงปี พ.ศ. ให้เป็น ค.ศ. (เช่น 68 -> 2025)
             if (year > 50 && year < 100) { year += 2000; }
             if (year < 2500) { year += 543; } 
 
@@ -384,7 +337,42 @@
             }), { sample: 0, male: 0, female: 0 });
         }
 
-        // --- Admin Functions ---
+        function formatDateToThaiRange(start, end) {
+            const thMonthNames = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+            const startDay = start.getDate();
+            const endDay = end.getDate();
+            const thYear = (start.getFullYear() + 543) % 100; 
+            const monthStr = thMonthNames[start.getMonth()];
+
+            if (start.getTime() === end.getTime()) {
+                 return `${startDay} ${monthStr} ${thYear}`;
+            }
+
+            if (start.getMonth() === end.getMonth() && start.getFullYear() === end.getFullYear()) {
+                return `${startDay} – ${endDay} ${monthStr} ${thYear}`;
+            }
+            return `${startDay} ${thMonthNames[start.getMonth()]} – ${endDay} ${thMonthNames[end.getMonth()]} ${thYear}`;
+        }
+
+        function formatDateToEnglishRange(start, end) {
+            const enMonthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            const startDay = start.getDate();
+            const endDay = end.getDate();
+            const enYear = (start.getFullYear() % 100).toString().padStart(2, '0');
+            const startMonthStr = enMonthNames[start.getMonth()];
+            const endMonthStr = enMonthNames[end.getMonth()];
+
+            if (start.getTime() === end.getTime()) {
+                 return `${startDay} ${startMonthStr} ${enYear}`;
+            }
+
+            if (start.getMonth() === end.getMonth() && start.getFullYear() === end.getFullYear()) {
+                return `${startDay} – ${endDay} ${startMonthStr} ${enYear}`;
+            }
+            return `${startDay} ${startMonthStr} – ${endDay} ${endMonthStr} ${enYear}`;
+        }
+
+        // --- Admin Handlers ---
 
         function renderAdminControls() {
             const controlsDiv = document.getElementById('admin-controls-nav');
@@ -425,7 +413,6 @@
         function handleLogin() {
             if (isLoggedIn && !isAdminMode) {
                 isAdminMode = true;
-                // ตั้งค่า tempData2 ให้ตรงกับ data2 ก่อนเข้าโหมดแก้ไข
                 tempData2 = JSON.parse(JSON.stringify(data2)); 
                 updateUI();
                 return;
@@ -447,20 +434,18 @@
             const confirmation = window.confirm("คุณต้องการยกเลิกการแก้ไขและออกจากโหมดแก้ไขหรือไม่? การเปลี่ยนแปลงจะไม่ถูกบันทึก");
             if (confirmation) {
                 isAdminMode = false;
-                tempData2 = JSON.parse(JSON.stringify(data2)); // รีเซ็ต tempData2
-                updateUI();
+                tempData2 = JSON.parse(JSON.stringify(data2)); 
+                resetFilter(false);
             }
         }
 
         function handleSave() {
             const confirmation = window.confirm("คุณต้องการบันทึกการเปลี่ยนแปลงช่วงวันที่หรือไม่?");
             if (confirmation) {
-                // บันทึกข้อมูลชั่วคราว (tempData2) ไปยังข้อมูลหลัก (data2) และ localStorage
                 data2 = JSON.parse(JSON.stringify(tempData2));
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(data2));
                 isAdminMode = false;
                 alert("บันทึกช่วงวันที่เรียบร้อยแล้ว!");
-                // รีเซ็ตตัวกรองวันที่ที่ใช้งานอยู่ก่อนอัปเดต UI
                 resetFilter(false); 
             }
         }
@@ -470,104 +455,62 @@
             if (confirmation) {
                 isLoggedIn = false;
                 isAdminMode = false;
-                tempData2 = JSON.parse(JSON.stringify(data2)); // รีเซ็ต
+                tempData2 = JSON.parse(JSON.stringify(data2)); 
                 alert("ออกจากระบบแล้ว");
-                updateUI();
+                resetFilter(false);
             }
         }
         
-        // 🔑 ฟังก์ชันสำหรับจัดการการเปลี่ยนแปลงวันที่ในโหมด Admin
+        /**
+         * 🔑 จัดการการคลิกแก้ไขวันที่ในตาราง (Booking-like)
+         */
         function handleDateChange(elementId, index, isEnglish) {
             // ดึงข้อมูลวันที่ปัจจุบันมาแสดงใน Flatpickr
-            const currentData = tempData2[index];
-            const currentThaiDate = currentData.date;
+            const currentData = isAdminMode ? tempData2[index] : data2[index];
+            const currentDates = currentData.date;
 
-            const fpInstance = flatpickr(document.getElementById(elementId), {
-                mode: "range",
-                dateFormat: "Y-m-d", // ใช้รูปแบบสากลในการเลือก
+            // ตรวจสอบและทำลาย instance เก่าก่อนสร้างใหม่ (ป้องกันบั๊ก)
+            const inputElement = document.getElementById(elementId);
+            if (inputElement._flatpickr) {
+                inputElement._flatpickr.destroy();
+            }
+
+            const fpInstance = flatpickr(inputElement, {
+                mode: "range", 
+                dateFormat: "Y-m-d", 
                 locale: isEnglish ? 'en' : 'th', 
-                defaultDate: isEnglish ? currentData.dateEn : currentData.date,
-                wrap: true, // ทำให้ Flatpickr แนบกับองค์ประกอบ
+                // ตั้งค่าวันที่เริ่มต้นจากข้อมูลปัจจุบัน
+                defaultDate: currentDates, 
+                wrap: true, 
                 onClose: function(selectedDates, dateStr, instance) {
-                    if (selectedDates.length === 2) {
+                    if (selectedDates.length === 2) { 
                         const start = selectedDates[0];
                         const end = selectedDates[1];
                         
-                        // สร้างรูปแบบวันที่ไทย/อังกฤษใหม่จาก Date object
-                        // (นี่เป็นส่วนที่ซับซ้อนเพราะต้องแปลงกลับไปเป็น "DD – DD MMM YY" Thai style)
+                        // แปลงและอัปเดตข้อมูลชั่วคราว (tempData2)
                         const newThaiDate = formatDateToThaiRange(start, end);
                         const newEnglishDate = formatDateToEnglishRange(start, end);
-
-                        // อัปเดตข้อมูลชั่วคราว
+                        
                         tempData2[index].date = newThaiDate;
                         tempData2[index].dateEn = newEnglishDate;
 
-                        // Force re-render of the table row only (Simplified)
-                        updateUI(); 
-                    } else if (dateStr) {
-                         // หากเลือกวันเดียว
-                         const newDate = new Date(dateStr);
-                         const newThaiDate = formatDateToThaiRange(newDate, newDate);
-                         const newEnglishDate = formatDateToEnglishRange(newDate, newDate);
-                         tempData2[index].date = newThaiDate;
-                         tempData2[index].dateEn = newEnglishDate;
-                         updateUI(); 
+                        updateUI(); // Rerender table to show changes
+                    } else if (selectedDates.length === 1) {
+                         alert("กรุณาเลือกวันที่สิ้นสุดด้วย");
                     }
-                    // ทำลาย instance เพื่อไม่ให้เกิดปัญหากับการ re-render
-                    instance.destroy();
+                    instance.destroy(); // ทำลายเมื่อปิด
                 }
             });
-            // เปิดปฏิทินทันทีที่ถูกเรียก
             fpInstance.open();
         }
 
-        // ฟังก์ชันช่วยในการแปลง Date Object เป็นรูปแบบ Thai Range String
-        function formatDateToThaiRange(start, end) {
-            const thMonthNames = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
-            const startDay = start.getDate();
-            const endDay = end.getDate();
-            // แปลงเป็นปี พ.ศ. (ค.ศ. + 543) และใช้เลข 2 ตัวท้าย (mod 100)
-            const thYear = (start.getFullYear() + 543) % 100; 
-            const monthStr = thMonthNames[start.getMonth()];
-
-            if (start.getTime() === end.getTime()) {
-                 return `${startDay} ${monthStr} ${thYear}`;
-            }
-
-            if (start.getMonth() === end.getMonth() && start.getFullYear() === end.getFullYear()) {
-                return `${startDay} – ${endDay} ${monthStr} ${thYear}`;
-            }
-            // Simplification: ถ้าข้ามเดือน/ปี ให้ใช้รูปแบบ startDay/startMonth – endDay/endMonth/endYear
-            return `${startDay} ${thMonthNames[start.getMonth()]} – ${endDay} ${thMonthNames[end.getMonth()]} ${thYear}`;
-        }
-
-        // ฟังก์ชันช่วยในการแปลง Date Object เป็นรูปแบบ English Range String (ใช้สำหรับ dataEn)
-        function formatDateToEnglishRange(start, end) {
-            const enMonthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-            const startDay = start.getDate();
-            const endDay = end.getDate();
-            const enYear = (start.getFullYear() % 100).toString().padStart(2, '0'); // ใช้เลข 2 ตัวท้าย
-            const monthStr = enMonthNames[start.getMonth()];
-
-            if (start.getTime() === end.getTime()) {
-                 return `${startDay} ${monthStr} ${enYear}`;
-            }
-
-            if (start.getMonth() === end.getMonth() && start.getFullYear() === end.getFullYear()) {
-                return `${startDay} – ${endDay} ${monthStr} ${enYear}`;
-            }
-            // Simplification: ถ้าข้ามเดือน/ปี ให้ใช้รูปแบบ startDay/startMonth – endDay/endMonth/endYear
-            return `${startDay} ${enMonthNames[start.getMonth()]} – ${endDay} ${enMonthNames[end.getMonth()]} ${enYear}`;
-        }
-        
         // --- Filter Logic ---
 
         function applyFilter(startFilterDate, endFilterDate) {
             if (!startFilterDate || !endFilterDate) {
-                return resetFilter();
+                return resetFilter(false);
             }
 
-            // 1. กรอง data2 (หรือ tempData2 ถ้าอยู่ในโหมดแก้ไข) เพื่อหาศูนย์ฝึกฯ ที่มีช่วงเวลาทับซ้อน
             const currentDataSource = isAdminMode ? tempData2 : data2;
 
             const filteredCentersDetails = currentDataSource.filter(detail => {
@@ -580,7 +523,6 @@
 
             const matchingCenterKeys = filteredCentersDetails.map(detail => detail.province || detail.name);
 
-            // 2. กรอง data1 ตามศูนย์ฝึกฯ ที่มีการลงพื้นที่ในช่วงเวลาที่กำหนด
             filteredData1 = data1.filter(stat => {
                 const centerKey = stat.center;
                 
@@ -590,10 +532,7 @@
                 return matchingCenterKeys.includes(centerKey);
             });
 
-            // 3. อัปเดตสถิติรวม
             globalTotalStats = calculateTotalStats(filteredData1);
-            
-            // 4. อัปเดต UI
             updateUI();
         }
 
@@ -614,33 +553,21 @@
 
         function updateUI() {
             const t = i18n[currentLang];
-
-            // 1. Update Static Text and Admin Controls
-            document.getElementById('navTitle').innerText = t.navTitle;
-            document.getElementById('navSubtitle').innerText = t.navSubtitle;
-            document.getElementById('langText').innerText = t.langText;
-            document.getElementById('langIcon').innerText = currentLang === 'th' ? 'TH' : 'EN';
-            document.getElementById('btnPrint').innerText = t.btnPrint;
-            document.getElementById('card1Title').innerText = t.card1Title;
-            document.getElementById('unitPerson').innerText = t.unitPerson;
-            document.getElementById('card2Title').innerText = t.card2Title;
-            document.getElementById('unitPerson2').innerText = t.unitPerson2;
-            document.getElementById('card3Title').innerText = t.card3Title;
-            document.getElementById('unitCenter').innerText = t.unitCenter;
-            document.getElementById('chart1Title').innerText = t.chart1Title;
-            document.getElementById('chart2Title').innerText = t.chart2Title;
-            document.getElementById('tableTitle').innerText = t.tableTitle;
-            document.getElementById('tableSubtitle').innerText = t.tableSubtitle;
-            document.getElementById('thCenter').innerText = t.thCenter;
-            document.getElementById('thDate').innerText = t.thDate;
-            document.getElementById('thMale').innerText = t.thMale;
-            document.getElementById('thFemale').innerText = t.thFemale;
-            document.getElementById('thTotal').innerText = t.thTotal;
-            document.getElementById('footerTotal').innerText = t.footerTotal;
+            // Update Text
+            document.getElementById('navTitle').innerText = t.navTitle; document.getElementById('navSubtitle').innerText = t.navSubtitle;
+            document.getElementById('langText').innerText = t.langText; document.getElementById('langIcon').innerText = currentLang === 'th' ? 'TH' : 'EN';
+            document.getElementById('btnPrint').innerText = t.btnPrint; document.getElementById('card1Title').innerText = t.card1Title;
+            document.getElementById('unitPerson').innerText = t.unitPerson; document.getElementById('card2Title').innerText = t.card2Title;
+            document.getElementById('unitPerson2').innerText = t.unitPerson2; document.getElementById('card3Title').innerText = t.card3Title;
+            document.getElementById('unitCenter').innerText = t.unitCenter; document.getElementById('chart1Title').innerText = t.chart1Title;
+            document.getElementById('chart2Title').innerText = t.chart2Title; document.getElementById('tableTitle').innerText = t.tableTitle;
+            document.getElementById('tableSubtitle').innerText = t.tableSubtitle; document.getElementById('thCenter').innerText = t.thCenter;
+            document.getElementById('thDate').innerText = t.thDate; document.getElementById('thMale').innerText = t.thMale; document.getElementById('thFemale').innerText = t.thFemale;
+            document.getElementById('thTotal').innerText = t.thTotal; document.getElementById('footerTotal').innerText = t.footerTotal;
             
-            renderAdminControls(); // RENDER ADMIN BUTTONS
+            renderAdminControls(); 
 
-            // 2. Update Stats
+            // Update Stats
             document.getElementById('totalSamples').innerText = globalTotalStats.sample;
             document.getElementById('maleCount').innerText = globalTotalStats.male;
             document.getElementById('centerCount').innerText = filteredData1.length;
@@ -648,33 +575,27 @@
             document.getElementById('totalFemaleTable').innerText = globalTotalStats.female;
             document.getElementById('totalSampleTable').innerText = globalTotalStats.sample;
 
-            // 3. Render Table
             renderTable(t);
-
-            // 4. Update Charts
             renderCharts(t);
         }
 
         function renderTable(t) {
             const tableBody = document.getElementById('tableBody');
-            tableBody.innerHTML = ''; // Clear existing
+            tableBody.innerHTML = ''; 
             
-            // ใช้ข้อมูลที่ถูกกรองและ data2 (หรือ tempData2) สำหรับข้อมูลวันที่
             const currentDataSource = isAdminMode ? tempData2 : data2;
 
             filteredData1.forEach((row, index) => {
-                // Find matching info from current data source
                 let info = currentDataSource.find(d => d.province === row.center);
                 if (!info && row.center === "บ้านชายกรุณา") {
                     info = currentDataSource.find(d => d.name.includes("บ้านชายกรุณา"));
                 }
 
-                // Determine display values based on language
                 const displayName = currentLang === 'th' ? (info ? info.name : row.center) : (info ? info.nameEn : centerTranslations[row.center] || row.center);
                 const displayProvince = currentLang === 'th' ? (info ? info.province : '') : (info ? info.provinceEn : '');
                 const displayDate = currentLang === 'th' ? (info ? info.date : '-') : (info ? info.dateEn : '-');
                 
-                // หา index ใน data2 ที่ตรงกันเพื่ออ้างอิงในการแก้ไข
+                // หา index ใน data2 (ข้อมูลจริง) เพื่ออ้างอิงในการแก้ไข
                 const originalIndex = data2.findIndex(d => d.province === row.center || (row.center === "บ้านชายกรุณา" && d.name.includes("บ้านชายกรุณา")));
 
                 const tr = document.createElement('tr');
@@ -682,20 +603,22 @@
                 
                 let dateCellHTML = '';
                 if (isAdminMode) {
-                     // 🔑 โหมดแก้ไข: ใช้ input ที่ซ่อนอยู่และ span ที่เรียก flatpickr
+                     // 🔑 โหมดแก้ไข (Booking-like picker)
+                     const dateKey = `date-input-${originalIndex}`;
                      dateCellHTML = `
-                        <span id="date-edit-${originalIndex}" 
-                              class="inline-flex items-center px-3 py-1 rounded-md text-xs font-medium bg-indigo-100 border border-indigo-300 text-indigo-700 shadow-sm cursor-pointer hover:bg-indigo-200 transition-all w-full"
-                              onclick="handleDateChange('date-input-${originalIndex}', ${originalIndex}, '${currentLang}' === 'en')"
-                              data-input-id="date-input-${originalIndex}"
-                              >
-                            <i data-lucide="calendar" size="12" class="mr-1.5 opacity-70"></i>
-                            ${displayDate}
-                        </span>
-                        <input type="text" id="date-input-${originalIndex}" data-input style="display:none;" />
+                        <div class="relative w-full inline-block" data-toggle>
+                            <span id="date-edit-${originalIndex}" 
+                                class="inline-flex items-center px-3 py-1 rounded-md text-xs font-medium bg-indigo-100 border border-indigo-300 text-indigo-700 shadow-sm cursor-pointer hover:bg-indigo-200 transition-all w-full"
+                                onclick="handleDateChange('${dateKey}', ${originalIndex}, '${currentLang}' === 'en')"
+                                >
+                                <i data-lucide="calendar" size="12" class="mr-1.5 opacity-70"></i>
+                                ${displayDate}
+                            </span>
+                            <input type="text" id="${dateKey}" style="display:none;" />
+                        </div>
                      `;
                 } else {
-                     // โหมดอ่าน: ใช้ span ธรรมดา
+                     // โหมดอ่าน
                      dateCellHTML = `
                         <span class="inline-flex items-center px-3 py-1 rounded-md text-xs font-medium bg-white border border-slate-200 text-slate-600 shadow-sm group-hover:border-indigo-200 group-hover:text-indigo-600 transition-all">
                             <i data-lucide="calendar" size="12" class="mr-1.5 opacity-70"></i>
@@ -713,9 +636,7 @@
                             <i data-lucide="map-pin" size="10"></i> ${displayProvince}
                         </div>
                     </td>
-                    <td class="px-6 py-4">
-                        ${dateCellHTML}
-                    </td>
+                    <td class="px-6 py-4">${dateCellHTML}</td>
                     <td class="px-6 py-4 text-center">
                         <span class="inline-block w-8 py-1 rounded bg-indigo-50 text-indigo-700 font-bold text-xs">${row.male}</span>
                     </td>
@@ -729,22 +650,15 @@
                 tableBody.appendChild(tr);
             });
             lucide.createIcons();
-            
-            // Re-setup Flatpickr for the main filter (since the table renders may overwrite)
             setupFlatpickr(false); 
         }
 
         function renderCharts(t) {
-            // ใช้ globalTotalStats สำหรับ Doughnut Chart
             const totalStats = globalTotalStats; 
 
             // --- 1. Gender Distribution (Doughnut Chart) ---
             if (genderChartInstance) { genderChartInstance.destroy(); }
-            // ... (โค้ดสร้าง genderChartInstance เหมือนเดิม) ...
-            const genderData = {
-                labels: [t.male, t.female],
-                datasets: [{ data: [totalStats.male, totalStats.female], backgroundColor: ['#4F46E5', '#EC4899'], hoverBackgroundColor: ['#6366F1', '#F472B6'], borderWidth: 0, spacing: 5, }]
-            };
+            const genderData = { labels: [t.male, t.female], datasets: [{ data: [totalStats.male, totalStats.female], backgroundColor: ['#4F46E5', '#EC4899'], hoverBackgroundColor: ['#6366F1', '#F472B6'], borderWidth: 0, spacing: 5, }] };
             const genderConfig = { type: 'doughnut', data: genderData, options: { responsive: true, maintainAspectRatio: false, cutout: '60%', plugins: { legend: { position: 'bottom', labels: { padding: 20, usePointStyle: true, font: { family: 'Sarabun, sans-serif' } } }, tooltip: { callbacks: { label: function(context) { let label = context.label || ''; if (label) { label += ': '; } if (context.parsed !== null) { const total = context.dataset.data.reduce((a, b) => a + b, 0); const percentage = total === 0 ? '0.0%' : ((context.parsed / total) * 100).toFixed(1) + '%'; label += context.parsed + ` (${percentage})`; } return label; } }, bodyFont: { family: 'Sarabun, sans-serif' }, titleFont: { family: 'Sarabun, sans-serif' } } }, layout: { padding: { top: 0, bottom: 10 } } } };
             const genderCtx = document.getElementById('genderChart').getContext('2d');
             genderChartInstance = new Chart(genderCtx, genderConfig);
@@ -752,13 +666,11 @@
 
             // --- 2. Proportion by Center (Bar Chart) ---
             if (pieChartInstance) { pieChartInstance.destroy(); }
-            // ... (โค้ดสร้าง pieChartInstance เหมือนเดิม) ...
             const centerLabels = filteredData1.map(d => currentLang === 'th' ? d.center : centerTranslations[d.center] || d.center);
             const centerMales = filteredData1.map(d => d.male);
             const centerFemales = filteredData1.map(d => d.female);
             const centerChartData = {
-                labels: centerLabels,
-                datasets: [
+                labels: centerLabels, datasets: [
                     { label: t.male, data: centerMales, backgroundColor: '#4F46E5', borderRadius: 4, },
                     { label: t.female, data: centerFemales, backgroundColor: '#EC4899', borderRadius: 4, }
                 ]
@@ -768,12 +680,9 @@
             pieChartInstance = new Chart(pieCtx, centerChartConfig);
         }
 
-        // 🔑 ฟังก์ชันสำหรับติดตั้ง Flatpickr (สำหรับตัวกรองหลัก)
         function setupFlatpickr(shouldUpdateUI = true) {
             flatpickr("#dateRangePicker", {
-                mode: "range",
-                dateFormat: "Y-m-d", // ใช้รูปแบบสากลในการเลือก
-                locale: "th", 
+                mode: "range", dateFormat: "Y-m-d", locale: "th", 
                 onChange: function(selectedDates, dateStr, instance) {
                     if (selectedDates.length === 2) {
                         applyFilter(selectedDates[0], selectedDates[1]);
@@ -786,9 +695,8 @@
         
         // --- Initialization ---
         document.addEventListener('DOMContentLoaded', () => {
-            loadData(); // โหลดข้อมูลที่แก้ไขล่าสุด (ถ้ามี)
+            loadData(); 
             lucide.createIcons();
-            // setupFlatpickr ถูกย้ายไปเรียกใน renderTable/updateUI
             updateUI();
         });
     </script>
