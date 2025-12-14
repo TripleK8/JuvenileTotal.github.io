@@ -479,7 +479,6 @@
                 mode: "range", 
                 dateFormat: "Y-m-d", 
                 locale: isEnglish ? 'en' : 'th', 
-                // ตั้งค่าวันที่เริ่มต้นจากข้อมูลปัจจุบัน
                 defaultDate: currentDates, 
                 wrap: true, 
                 onClose: function(selectedDates, dateStr, instance) {
@@ -498,7 +497,7 @@
                     } else if (selectedDates.length === 1) {
                          alert("กรุณาเลือกวันที่สิ้นสุดด้วย");
                     }
-                    instance.destroy(); // ทำลายเมื่อปิด
+                    instance.destroy(); 
                 }
             });
             fpInstance.open();
